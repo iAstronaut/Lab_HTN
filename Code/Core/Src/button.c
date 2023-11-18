@@ -1,14 +1,10 @@
-/*
- * button.c
- *
- *  Created on: Sep 25, 2023
- *      Author: HaHuyen
- */
 #include "button.h"
+
+#define LONG_PRESSED_TIME 1500
 
 uint16_t button_count[16];
 uint16_t spi_button = 0x0000;
-
+uint16_t time_value = LONG_PRESSED_TIME/READ_BUTTON_TIME;
 /**
   * @brief  Init matrix button
   * @param  None
@@ -46,6 +42,27 @@ void button_Scan(){
 	  }
 }
 
-
-
+/**
+  * @brief  check button "id" is pressed
+  * @param  id - id of button [0...15]
+  * @retval 1: button is pressed
+  * 		0: invalid para OR button is not pressed
+  */
+bool is_button_pressed(uint8_t id){
+	if(id > 16) return 0;
+	return button_count[id] == 1;
+}
+/**
+  * @brief  check button "id" is pressed
+  * @param  id - id of button [0...15]
+  * @retval 1: button is long pressed
+  * 		0: invalid para OR button is not long pressed
+  */
+bool is_button_long_pressed(uint8_t id){
+	if(id > 16) return 0;
+	if(button_count[id] < time_value){
+		return 0;
+	}
+	return 1;
+}
 

@@ -21,11 +21,16 @@
 #include "spi.h"
 #include "tim.h"
 #include "gpio.h"
+#include "fsmc.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "software_timer.h"
 #include "button.h"
+#include "lcd.h"
+#include "led.h"
+#include "fsm.h"
+#include "picture.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,7 +65,11 @@ void SystemClock_Config(void);
 void init(void){
 	HAL_TIM_Base_Start_IT(&htim2);
 	set_timer(2, READ_BUTTON_TIME);
+	set_timer(1, ONE_SECOND);
 	button_init();
+	lcd_init();
+	lcd_Clear(WHITE);
+	init_traffic_light();
 }
 /* USER CODE END 0 */
 
@@ -94,8 +103,15 @@ int main(void)
   MX_GPIO_Init();
   MX_SPI1_Init();
   MX_TIM2_Init();
+  MX_FSMC_Init();
   /* USER CODE BEGIN 2 */
   init();
+  box_rec(0, 0, 0, 240, 50, BLACK, BLACK, 0);
+  box_rec(1, 0, 50, 240, 220, BLACK, RED, 0);
+  box_rec(2, 0, 270, 240, 50, BLACK, BLUE, 0);
+  lcd_ShowPicture(10, 0, 50, 50, gImage_logo_hcmut);
+  lcd_ShowStr(60, 20, "TRAFFIC LIGHT", BLACK, WHITE, 24, 1);
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -105,10 +121,16 @@ int main(void)
 	  if(!is_timer_on(2)){
 		  set_timer(2, READ_BUTTON_TIME);
 		  button_Scan();
-		  if(button_count[0] == 1){
-			  HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
-		  }
+//			for(int i = 0; i < 16; i++){
+//				if(button_count[i] == 1){
+//					lcd_ShowIntNum(100, 200, i, 2, BLACK, WHITE, 32);
+//					HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
+//				}
+//			}
 	  }
+	  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, is_button_long_pressed(1));
+
+	  traffic_run();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
