@@ -1,5 +1,0 @@
-../Core/Src/led.c:70:6:box_rec	2
-../Core/Src/led.c:90:6:init_traffic_light	7
-../Core/Src/led.c:212:6:control_traffic_light	8
-../Core/Src/led.c:267:6:update_led_buf	4
-../Core/Src/led.c:278:6:LCD_DisplayNum	1

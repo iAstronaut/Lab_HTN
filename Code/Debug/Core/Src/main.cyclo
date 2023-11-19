@@ -1,4 +1,0 @@
-../Core/Src/main.c:65:6:init	1
-../Core/Src/main.c:80:5:main	2
-../Core/Src/main.c:145:6:SystemClock_Config	3
-../Core/Src/main.c:195:6:Error_Handler	1
