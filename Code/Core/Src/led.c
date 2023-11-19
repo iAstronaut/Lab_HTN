@@ -9,6 +9,9 @@
 
 #define NUM_BOX	5
 
+/*
+ * @brief:	Struct of circle led in traffic light
+ */
 typedef struct {
 	uint16_t center_x;
 	uint16_t center_y;
@@ -17,6 +20,9 @@ typedef struct {
 	uint8_t is_fill;
 } circle;
 
+/*
+ * @brief:	Struct of number to show traffic time
+ */
 typedef struct {
 	uint16_t x;
 	uint16_t y;
@@ -27,6 +33,9 @@ typedef struct {
 	uint8_t sizey;
 } number;
 
+/*
+ * @brief:	Struct of traffic light follow West and East
+ */
 struct {
 	uint16_t x;
 	uint16_t y;
@@ -40,8 +49,11 @@ struct {
 
 	//num
 	number num;
-}traffic_WE;
+} traffic_WE;
 
+/*
+ * @brief:	Struct of traffic light follow North and South
+ */
 struct {
 	uint16_t x;
 	uint16_t y;
@@ -56,7 +68,9 @@ struct {
 	number num;
 }traffic_NS;
 
-
+/*
+ * @brief:	Struct to create a box to seperate lcd_screen
+ */
 struct {
 	uint16_t X;
 	uint16_t Y;
@@ -67,7 +81,7 @@ struct {
 	uint8_t is_fill;
 } BOX[NUM_BOX];
 
-//draw a rec-box
+//draw a rectangle-box
 void box_rec(uint8_t box_idx, uint16_t x_start, uint16_t y_start,
 		uint16_t width, uint16_t height, uint16_t color_edge,
 		uint16_t color_fill, uint8_t is_fill) {
@@ -88,18 +102,21 @@ void box_rec(uint8_t box_idx, uint16_t x_start, uint16_t y_start,
 	}
 }
 
-
+/*@brief:	function to init traffic light
+ * @para:	none
+ * @retval:	none*/
 void init_traffic_light(void) {
-	//init WE
+/*init WE-----------------------------------------------------------------*/
 	traffic_WE.x = 40;
 	traffic_WE.y = 60;
-	//init traffic light
 	traffic_WE.width = 120;
 	traffic_WE.height = 40;
 	traffic_WE.COLOR_FILL = BLACK;
+	//draw a black box
 	lcd_DrawRectangle(traffic_WE.x, traffic_WE.y, traffic_WE.x + traffic_WE.width, traffic_WE.y + traffic_WE.height, traffic_WE.COLOR_FILL);
 	lcd_Fill(traffic_WE.x, traffic_WE.y, traffic_WE.x + traffic_WE.width, traffic_WE.y + traffic_WE.height, traffic_WE.COLOR_FILL);
 
+	//calculate center and radius of each light inside above black box
 	traffic_WE.red.center_x = traffic_WE.x + traffic_WE.width / 6;
 	traffic_WE.yellow.center_x = traffic_WE.x + 3 * traffic_WE.width / 6;
 	traffic_WE.green.center_x = traffic_WE.x + 5 * traffic_WE.width / 6;
@@ -149,17 +166,19 @@ void init_traffic_light(void) {
 	traffic_WE.num.y = traffic_WE.y;
 	traffic_WE.num.num = 10;
 	lcd_ShowIntNum(traffic_WE.num.x, traffic_WE.num.y, traffic_WE.num.num, traffic_WE.num.len, traffic_WE.num.fc, traffic_WE.num.bc, traffic_WE.num.sizey);
+/*End init WE-------------------------------------------------------------*/
 
-	//init NS
+/*init NS    -------------------------------------------------------------*/
 	traffic_NS.x = 180;
 	traffic_NS.y = 120;
-	//init traffic light
 	traffic_NS.width = traffic_WE.height;
 	traffic_NS.height = traffic_WE.width;
 	traffic_NS.COLOR_FILL = BLACK;
+	//draw a black box
 	lcd_DrawRectangle(traffic_NS.x, traffic_NS.y, traffic_NS.x + traffic_NS.width, traffic_NS.y + traffic_NS.height, traffic_NS.COLOR_FILL);
 	lcd_Fill(traffic_NS.x, traffic_NS.y, traffic_NS.x + traffic_NS.width, traffic_NS.y + traffic_NS.height, traffic_NS.COLOR_FILL);
 
+	//calculate center and radius of each light inside above black box
 	traffic_NS.red.center_y = traffic_NS.y + traffic_NS.height / 6;
 	traffic_NS.yellow.center_y = traffic_NS.y + 3 * traffic_NS.height / 6;
 	traffic_NS.green.center_y = traffic_NS.y + 5 * traffic_NS.height / 6;
@@ -209,8 +228,14 @@ void init_traffic_light(void) {
 	traffic_NS.num.y = traffic_NS.y - traffic_NS.num.sizey;
 	traffic_NS.num.num = 99;
 	lcd_ShowIntNum(traffic_NS.num.x, traffic_NS.num.y, traffic_NS.num.num, traffic_NS.num.len, traffic_NS.num.fc, traffic_NS.num.bc, traffic_NS.num.sizey);
+/*End init NS-------------------------------------------------------------*/
 }
 
+/*
+ * @brief: 	display traffic light function
+ * @para:	i - id of traffic light(0: WE, 1: NS)
+ * 			red, yellow, green - state of red, yellow and green led (1: on, 0: off)
+ * @retval:	none*/
 void control_traffic_light(uint8_t i, uint8_t red, uint8_t yellow, uint8_t green){
 	if(i == 0){
 		//draw red
@@ -266,6 +291,11 @@ void control_traffic_light(uint8_t i, uint8_t red, uint8_t yellow, uint8_t green
 	}
 }
 
+/*
+ * @brief: 	update traffic light time value and show mode function
+ * @para:	val1 is value of WE time, val2 is value of NS time
+ * 			mode is mode of traffic system described in the request
+ * @retval:	none*/
 void update_led_buf(unsigned val1, unsigned val2, unsigned mode){
 	if(mode == 4 || mode == 3 || mode == 2){
 		lcd_ShowIntNum(140, 280, mode, 1, RED, GRAY, 32);
@@ -277,6 +307,10 @@ void update_led_buf(unsigned val1, unsigned val2, unsigned mode){
 	traffic_NS.num.num = val2;
 }
 
+/*
+ * @brief: 	display number function
+ * @para:	noe
+ * @retval:	none*/
 void LCD_DisplayNum(){
 	lcd_ShowStr(60, 280, "MODE:", RED, GRAY, 32, 0);
 	lcd_ShowIntNum(traffic_WE.num.x, traffic_WE.num.y, traffic_WE.num.num, traffic_WE.num.len, traffic_WE.num.fc, traffic_WE.num.bc, traffic_WE.num.sizey);

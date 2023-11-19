@@ -118,17 +118,11 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  //read button every READ_BUTTON_TIME
 	  if(!is_timer_on(2)){
 		  set_timer(2, READ_BUTTON_TIME);
 		  button_Scan();
-//			for(int i = 0; i < 16; i++){
-//				if(button_count[i] == 1){
-//					lcd_ShowIntNum(100, 200, i, 2, BLACK, WHITE, 32);
-//					HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
-//				}
-//			}
 	  }
-	  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, is_button_long_pressed(1));
 
 	  traffic_run();
     /* USER CODE END WHILE */

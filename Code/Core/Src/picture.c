@@ -1,10 +1,9 @@
 /*
  * picture.c
- *
- *  Created on: Oct 30, 2023
- *      Author: phamv
  */
 #include "picture.h"
+
+//HCMUT LOGO(50x50)
 const unsigned char gImage_logo_hcmut[5000] = { /* 0X10,0X10,0X00,0X32,0X00,0X32,0X01,0X1B, */
 0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,
 0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,0XFF,

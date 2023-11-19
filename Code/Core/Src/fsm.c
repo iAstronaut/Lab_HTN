@@ -108,6 +108,12 @@ void increase_value(void) {
 	}
 }
 
+/*
+ * @brief:	mode button fsm - 2 states
+ * @para:	none
+ * @retval:	1 - successful
+ * 			0 - fail
+ * */
 bool button0_fsm(void) {
 	switch (button_st[0]) {
 	case release:
@@ -187,7 +193,6 @@ bool button1_fsm(void) {
 	switch (button_st[1]) {
 	case release:
 		if (is_button_pressed(1) == 1) {
-			// to do
 			light_pre_st = light_st;
 			light_st = INCREASE_BY_1;
 			button_st[1] = pressed;
@@ -204,7 +209,6 @@ bool button1_fsm(void) {
 		}
 		break;
 	case long_pressed:
-		// to do
 		if (light_st != INCREASE_BY_1_OVER_TIME) {
 			light_pre_st = light_st;
 			light_st = INCREASE_BY_1_OVER_TIME;
@@ -221,6 +225,11 @@ bool button1_fsm(void) {
 	}
 	return 1;
 }
+
+/*
+ * @brief: 	finite state machine to control behavior of traffic light
+ * @para:	none
+ * @retval:	none*/
 void traffic_light_fsm(void) {
 	update_led_buf(traffic_light_timer1, traffic_light_timer2, 1);
 	switch (tl_st) {
@@ -263,6 +272,11 @@ void traffic_light_fsm(void) {
 	}
 }
 
+/*
+ * @brief  Top-layer finite state machine
+ * @param  None
+ * @retval None
+ */
 void traffic_run(void) {
 	switch (light_st) {
 	case TRAFFIC_LIGHT:
