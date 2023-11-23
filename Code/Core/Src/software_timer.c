@@ -7,7 +7,7 @@
 
 #include"software_timer.h"
 
-#define NUMBER_OF_TIMER	1
+#define NUMBER_OF_TIMER	3
 /*
  * bief: state --> timer is on or off (1: on, 0: off)
  * */
@@ -16,6 +16,8 @@ struct {
 	unsigned int count;
 } timer[NUMBER_OF_TIMER];
 /* timer[0]: to read button
+ * timer[1]: to blink number
+ * timer[2]: to increase number over time
  * */
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
