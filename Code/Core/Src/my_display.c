@@ -35,13 +35,13 @@ void init_box() {
 	box.x_hour = 70;
 	box.y_hour = 100;
 	box.x_day = 20;
-	box.y_day = 130;
+	box.y_day = 154;
 	box.x_date = 70;
-	box.y_date = 130;
+	box.y_date = 154;
 	box.x_month = 110;
-	box.y_month = 130;
+	box.y_month = 154;
 	box.x_year = 150;
-	box.y_year = 130;
+	box.y_year = 154;
 }
 /**
  * @brief  display second in lcd or not
@@ -56,7 +56,6 @@ void dis_sec(uint8_t number, bool i) {
 	else
 		lcd_ShowIntNum(box.x_second, box.y_second, number, 2,
 				box.background_color, box.background_color, 24);
-
 }
 /**
  * @brief  display minutes in lcd or not
@@ -94,6 +93,7 @@ void dis_hour(uint8_t number, bool i) {
  * @retval none
  */
 void dis_day(uint8_t number, bool i) {
+	//lcd_ShowStr(box.x_day, box.y_day - 5, ": Day", box.text_color, box.background_color, 24, 0);
 	if (i){
 		if(number != 1)
 		lcd_ShowIntNum(box.x_day, box.y_day, number, 2, box.text_color,
@@ -113,6 +113,7 @@ void dis_day(uint8_t number, bool i) {
  * @retval none
  */
 void dis_date(uint8_t number, bool i) {
+	//lcd_ShowStr(box.x_date, box.y_date - 5, ": Date", box.text_color, box.background_color, 24, 0);
 	if (i)
 		lcd_ShowIntNum(box.x_date, box.y_date, number, 2, box.text_color,
 				box.background_color, 24);
@@ -127,6 +128,7 @@ void dis_date(uint8_t number, bool i) {
  * @retval none
  */
 void dis_month(uint8_t number, bool i) {
+	//lcd_ShowStr(box.x_month, box.y_month - 5, ": Month", box.text_color, box.background_color, 24, 0);
 	if (i)
 		lcd_ShowIntNum(box.x_month, box.y_month, number, 2, box.text_color,
 				box.background_color, 24);
@@ -147,4 +149,17 @@ void dis_year(uint8_t number, bool i) {
 	else
 		lcd_ShowIntNum(box.x_year, box.y_year, number, 2, box.background_color,
 				box.background_color, 24);
+}
+
+void display_text(){
+	lcd_Clear(BLACK);
+
+	lcd_ShowStr(box.x_day, box.y_day - 24, "Day", box.text_color, box.background_color, 24, 0);
+	lcd_ShowStr(box.x_second, box.y_second - 24, "sec", box.text_color, box.background_color, 24, 0);
+	lcd_ShowStr(box.x_minute, box.y_minute - 24, "min", box.text_color, box.background_color, 24, 0);
+	lcd_ShowStr(box.x_hour - 24, box.y_hour - 24, "hour", box.text_color, box.background_color, 24, 0);
+
+	lcd_ShowStr(box.x_date, box.y_date - 24, "DD", box.text_color, box.background_color, 24, 0);
+	lcd_ShowStr(box.x_month, box.y_month - 24, "MM", box.text_color, box.background_color, 24, 0);
+	lcd_ShowStr(box.x_year, box.y_year - 24, "YY", box.text_color, box.background_color, 24, 0);
 }
