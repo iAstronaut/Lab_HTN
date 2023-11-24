@@ -12,7 +12,7 @@ unsigned char s[50];
 
 _lcd_dev lcddev;
 
-void LCD_WR_REG(uint16_t reg) //
+void LCD_WR_REG(uint16_t reg)
 {
 	LCD->LCD_REG=reg;
 }
@@ -79,24 +79,33 @@ uint16_t lcd_ReadPoint(uint16_t x,uint16_t y)
 	return (((r>>11)<<11)|((g>>10)<<5)|(b>>11));
 }
 
-
+/**
+  * @brief  Fill all pixels with a color
+  * @param  color Color to fill the screen
+  * @retval None
+  */
 void lcd_Clear(uint16_t color) //
 {
 	uint16_t i,j;
-	uint8_t buffer[2];
-	buffer[0] = color >> 8;
-	buffer[1] = color;
 	lcd_AddressSet(0,0,lcddev.width-1,lcddev.height-1);
 	for(i=0;i<lcddev.width;i++)
 	{
 		for(j=0;j<lcddev.height;j++)
 		{
 			LCD_WR_DATA(color);
-//			sram_WriteBuffer(&buffer, (i*lcddev.width+j)*4, 2);
 		}
 	}
 }
 
+/**
+  * @brief  Fill a group of pixels with a color
+  * @param  xsta	Start column
+  * @param  ysta	Start row
+  * @param  xend	End column
+  * @param  yend	End row
+  * @param  color Color to fill
+  * @retval None
+  */
 void lcd_Fill(uint16_t xsta,uint16_t ysta,uint16_t xend,uint16_t yend,uint16_t color) //add a hcn = 1 mau car been trogn
 {
 	uint16_t i,j;
@@ -110,12 +119,28 @@ void lcd_Fill(uint16_t xsta,uint16_t ysta,uint16_t xend,uint16_t yend,uint16_t c
 	}
 }
 
+/**
+  * @brief  Fill a pixel with a color
+  * @param  x X coordinate
+  * @param  y Y coordinate
+  * @param  color Color to fill
+  * @retval None
+  */
 void lcd_DrawPoint(uint16_t x,uint16_t y,uint16_t color) // 1 ddieemr anhr
 {
 	lcd_AddressSet(x,y,x,y);//ÉèÖÃ¹â±êÎ»ÖÃ
 	LCD_WR_DATA(color);
 }
 
+/**
+  * @brief  Draw a line with a color
+  * @param  x1 X coordinate of start point
+  * @param  y1 Y coordinate of start point
+  * @param  x2 X coordinate of end point
+  * @param  y2 Y coordinate of end point
+  * @param  color Color to fill
+  * @retval None
+  */
 void lcd_DrawLine(uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2,uint16_t color) // ve duong
 {
 	uint16_t t;
@@ -160,21 +185,21 @@ void lcd_DrawRectangle(uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2,uint16
 	lcd_DrawLine(x2,y1,x2,y2,color);
 }
 
-void lcd_ShowChar(uint16_t x,uint16_t y,uint8_t num,uint16_t fc,uint16_t bc,uint8_t sizey,uint8_t mode) // 1ky tu size = 12 16 24 32, fc: mau chuw, bc, mauf neefn, mode: hien neen
+void lcd_ShowChar(uint16_t x,uint16_t y,uint8_t character,uint16_t fc,uint16_t bc,uint8_t sizey,uint8_t mode) // 1ky tu size = 12 16 24 32, fc: mau chuw, bc, mauf neefn, mode: hien neen
 {
 	uint8_t temp,sizex,t,m=0;
 	uint16_t i,TypefaceNum;
 	uint16_t x0=x;
 	sizex=sizey/2;
 	TypefaceNum=(sizex/8+((sizex%8)?1:0))*sizey;
-	num=num-' ';
+	character=character-' ';
 	lcd_AddressSet(x,y,x+sizex-1,y+sizey-1);
 	for(i=0;i<TypefaceNum;i++)
 	{
 		if(sizey==12);
-		else if(sizey==16)temp=ascii_1608[num][i];
-		else if(sizey==24)temp=ascii_2412[num][i];
-		else if(sizey==32)temp=ascii_3216[num][i];
+		else if(sizey==16)temp=ascii_1608[character][i];
+		else if(sizey==24)temp=ascii_2412[character][i];
+		else if(sizey==32)temp=ascii_3216[character][i];
 		else return;
 		for(t=0;t<8;t++)
 		{
@@ -233,7 +258,7 @@ void lcd_ShowIntNum(uint16_t x,uint16_t y,uint16_t num,uint8_t len,uint16_t fc,u
 }
 
 
-void lcd_ShowFloatNum1(uint16_t x,uint16_t y,float num,uint8_t len,uint16_t fc,uint16_t bc,uint8_t sizey)
+void lcd_ShowFloatNum(uint16_t x,uint16_t y,float num,uint8_t len,uint16_t fc,uint16_t bc,uint8_t sizey)
 {
 	uint8_t t,temp,sizex;
 	uint16_t num1;
@@ -291,7 +316,7 @@ void lcd_init(void)
 	HAL_Delay(500);
 	HAL_GPIO_WritePin(FSMC_RES_GPIO_Port, FSMC_RES_Pin, GPIO_PIN_SET);
 	HAL_Delay(500);
-	lcd_SetDir(L2R_U2D);
+	lcd_SetDir(DFT_SCAN_DIR);
 	LCD_WR_REG(0XD3);
 	lcddev.id=LCD_RD_DATA();	//dummy read
 	lcddev.id=LCD_RD_DATA();
@@ -333,9 +358,8 @@ void lcd_init(void)
 	LCD_WR_REG(0xC7);    //VCM control2
 	LCD_WR_DATA(0XB7);
 	LCD_WR_REG(0x36);    // Memory Access Control
-	LCD_WR_DATA(0x08|L2R_U2D);
 
-//	LCD_WR_DATA(0x08|DFT_SCAN_DIR);
+	LCD_WR_DATA(0x08|DFT_SCAN_DIR);
 	LCD_WR_REG(0x3A);
 	LCD_WR_DATA(0x55);
 	LCD_WR_REG(0xB1);
@@ -396,7 +420,7 @@ void lcd_init(void)
 	HAL_GPIO_WritePin(FSMC_BLK_GPIO_Port, FSMC_BLK_Pin, 1);
 }
 
-void _draw_circle_8(int xc, int yc, int x, int y, uint16_t c)
+static void _draw_circle_8(int xc, int yc, int x, int y, uint16_t c)
 {
 	lcd_DrawPoint(xc + x, yc + y, c);
 
@@ -451,10 +475,10 @@ void lcd_DrawCircle(int xc, int yc,uint16_t c,int r, int fill) //ve duong or hin
 	}
 }
 
-void lcd_ShowStr(uint16_t x, uint16_t y,uint8_t *str,uint16_t fc, uint16_t bc,uint8_t sizey,uint8_t mode)
+void lcd_ShowStr(uint16_t x, uint16_t y,char *str,uint16_t fc, uint16_t bc,uint8_t sizey,uint8_t mode)
 {
 	uint16_t x0=x;
-  uint8_t bHz=0;
+    uint8_t bHz=0;
 	while(*str!=0)
 	{
 		if(!bHz)
@@ -479,43 +503,11 @@ void lcd_ShowStr(uint16_t x, uint16_t y,uint8_t *str,uint16_t fc, uint16_t bc,ui
 	}
 }
 
-
-void lcd_StrCenter(uint16_t x, uint16_t y,uint8_t *str,uint16_t fc,uint16_t bc,uint8_t sizey,uint8_t mode)
+void lcd_StrCenter(uint16_t x, uint16_t y,char *str,uint16_t fc,uint16_t bc,uint8_t sizey,uint8_t mode)
 {
 	uint16_t len=strlen((const char *)str);
 	uint16_t x1=(lcddev.width-len*8)/2;
 	lcd_ShowStr(x+x1,y,str,fc,bc,sizey,mode);
 }
-void DrawTestPage(uint8_t *str)
-{
-	lcd_Fill(0,0,lcddev.width,20,BLUE);
-	lcd_Fill(0,lcddev.height-20,lcddev.width,lcddev.height,BLUE);
-	lcd_StrCenter(0,2,str,WHITE,BLUE,16,1);
-	lcd_StrCenter(0,lcddev.height-18,"Test page",WHITE,BLUE,16,1);
-	lcd_Fill(0,20,lcddev.width,lcddev.height-20,BLACK);
-}
 
-//void lcd_ShowBackground(){
-//	  DrawTestPage("Test Kit");
-//	  lcd_ShowPicture(0, 20, 240, 280, gImage_traffic);
-//}
-
-void lcd_Display(){
-	uint16_t i,j;
-	uint8_t buffer[2];
-	uint16_t send;
-	lcd_AddressSet(0,0,lcddev.width-1,lcddev.height-1);//ÉèÖÃÏÔÊ¾·¶Î§
-	for(i=0;i<lcddev.width;i++)
-	{
-		for(j=0;j<lcddev.height;j++)
-		{
-//			sram_ReadBuffer(buffer, (i*lcddev.width+j)*4, 2);
-//			sram_ReadBuffer(&buffer[1], (i*lcddev.width+j+1)*4, 1);
-//			send = buffer[0];
-//			send = send << 8;
-//			send |= buffer[1];
-			LCD_WR_DATA(send);
-		}
-	}
-}
 

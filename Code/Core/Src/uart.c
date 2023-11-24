@@ -10,7 +10,6 @@ uint8_t receive_buffer1 = 0;
 uint8_t msg[100];
 
 void uart_init_rs232(){
-	ring_buffer_init(&msg, 4, 1);
 	HAL_UART_Receive_IT(&huart1, &receive_buffer1, 1);
 }
 
@@ -61,7 +60,6 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 		// rs232 isr
 		// can be modified
 		HAL_UART_Transmit(&huart1, &receive_buffer1, 1, 10);
-
 
 		// turn on the receice interrupt
 		HAL_UART_Receive_IT(&huart1, &receive_buffer1, 1);

@@ -10,7 +10,6 @@
 #include "usart.h"
 #include <stdio.h>
 #include "utils.h"
-#include "ring_buff.h"
 
 void uart_init_rs232();
 
