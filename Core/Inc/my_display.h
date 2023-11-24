@@ -21,5 +21,5 @@ void dis_hour(uint8_t number, bool i);
 void dis_min(uint8_t number, bool i);
 void dis_sec(uint8_t number, bool i);
 void init_box();
-void display_text();
+void display_text(void);
 #endif /* INC_MY_DISPLAY_H_ */

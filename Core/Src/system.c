@@ -39,6 +39,7 @@ void system_init(void) {
 	ds3231_init();
 	init_box();
 	update_ds3231_register();
+	display_text();
 }
 
 void system_loop(void) {

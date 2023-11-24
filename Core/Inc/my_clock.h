@@ -12,7 +12,6 @@
 #include "my_display.h"
 #include "define.h"
 #include "button.h"
-#include "buzzer.h"
 void update_ds3231_register(void);
 void fsm_clock(void);
 #endif /* INC_MY_CLOCK_H_ */

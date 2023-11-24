@@ -28,11 +28,11 @@ uint8_t buf_date = 20;
 uint8_t buf_mon = 10;
 uint8_t buf_year = 23;
 
-uint8_t ala_min = 20;
-uint8_t ala_hour = 11;
+uint8_t ala_min = 12;
+uint8_t ala_hour = 20;
 uint8_t ala_day = 6;
-uint8_t ala_date = 24;
-uint8_t ala_mon = 11;
+uint8_t ala_date = 20;
+uint8_t ala_mon = 10;
 uint8_t ala_year = 23;
 
 void update_clock(void);
@@ -54,12 +54,9 @@ void alarm(void) {
 	if (ala_year == buf_year && ala_mon == buf_mon && ala_date == buf_date
 			&& ala_day == buf_day && ala_hour == buf_hour
 			&& ala_min == buf_min) {
-
 		lcd_ShowStr(10, 200, "WAKE UP", WHITE, RED, 24, 0);
-		buzzer_SetVolume(50);
 	}
 	else{
-		buzzer_SetVolume(0);
 		lcd_ShowStr(10, 200, "WAKE UP", BLACK, BLACK, 24, 0);
 	}
 }
@@ -73,20 +70,19 @@ void fsm_clock(void) {
 	case DISPLAY:
 		update_clock();
 		display_all_clock();
-		display_mode();
+
 		alarm();
 		button0_fsm();
 		break;
 	case CHANGE_TIME:
 		fsm_changing();
-		display_mode();
 		button0_fsm();
 		break;
 	case ALARM:
 		fsm_alarm();
-		display_mode();
 		button0_fsm();
 	}
+	display_mode();
 }
 /*
  * @brief:	blinking number, changing buffer of alarm
@@ -477,6 +473,7 @@ bool button2_fsm(void) {
 					st_changing = SECOND;
 					break;
 				}
+				display_all_alarm();
 			}
 			button_st[2] = pressed;
 		} else if (is_button_pressed(12) == ERROR)

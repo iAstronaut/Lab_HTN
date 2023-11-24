@@ -151,7 +151,7 @@ void dis_year(uint8_t number, bool i) {
 				box.background_color, 24);
 }
 
-void display_text(){
+void display_text(void){
 	lcd_Clear(BLACK);
 
 	lcd_ShowStr(box.x_day, box.y_day - 24, "Day", box.text_color, box.background_color, 24, 0);
