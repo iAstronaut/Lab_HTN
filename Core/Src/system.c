@@ -6,8 +6,7 @@
  */
 
 #include "system.h"
-#include "picture.h"
-#include "my_clock.h"
+
 extern TIM_HandleTypeDef htim2;
 
 void test_lcd() {
@@ -18,7 +17,11 @@ void test_lcd() {
 	lcd_DrawCircle(160, 120, BRED, 40, 0);
 	lcd_ShowPicture(80, 200, 90, 90, gImage_logo);
 }
-
+void test_Uart(){
+	if(button_count[12] == 1){
+		uart_Rs232SendNumPercent(23);
+	}
+}
 void displayTime() {
 	lcd_ShowIntNum(70, 100, ds3231_hours, 2, GREEN, BLACK, 24);
 	lcd_ShowIntNum(110, 100, ds3231_min, 2, GREEN, BLACK, 24);
@@ -30,24 +33,26 @@ void displayTime() {
 }
 
 void system_init(void) {
-	HAL_TIM_Base_Start_IT(&htim2);
-	set_timer(0, READ_BUTTON_TIME);
-	set_timer(1, BLINKING_TIME);
-	button_init();
+//	HAL_TIM_Base_Start_IT(&htim2);
+//	set_timer(0, READ_BUTTON_TIME);
+//	set_timer(1, BLINKING_TIME);
+//	button_init();
 	lcd_init();
 	lcd_Clear(BLACK);
-	ds3231_init();
+//	ds3231_init();
 	init_box();
-	update_ds3231_register();
+//	update_ds3231_register();
 	display_text();
+	//uart_init_rs232();
 }
 
 void system_loop(void) {
-	if (!is_timer_on(0)) {
-		ds3231_ReadTime();
-		button_Scan();
-		set_timer(0, READ_BUTTON_TIME);
-	}
-	fsm_clock();
+//	if (!is_timer_on(0)) {
+//		ds3231_ReadTime();
+//		button_Scan();
+//		set_timer(0, READ_BUTTON_TIME);
+//	}
+//	fsm_handle_uart_flag();
+//	fsm_clock();
 
 }

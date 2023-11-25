@@ -7,16 +7,16 @@
 
 #include "my_clock.h"
 
-enum {
-	DISPLAY, CHANGE_TIME, ALARM
-} st_clock = DISPLAY;
+enum enum_st_clock st_clock = DISPLAY;
 enum {
 	release, pressed, long_pressed
 } /*state variable of button*/button_st[3];
 enum {
 	SECOND, MINUTE, HOUR, DAY, DATE, MONTH, YEAR
 } st_changing = SECOND;
-
+enum {
+	TYPING, CHECK_DATA, HANDLE_DATA
+} st_uart_respone;
 enum {
 	ON, OFF
 } st_blinking;
@@ -35,16 +35,20 @@ uint8_t ala_date = 20;
 uint8_t ala_mon = 10;
 uint8_t ala_year = 23;
 
+uint16_t data = 0;
 void update_clock(void);
 void display_all_clock(void);
 bool button0_fsm(void);
 void fsm_changing(void);
 void fsm_alarm(void);
+void fsm_uart_respone(void);
 bool button1_fsm(uint8_t *number);
 bool button2_fsm(void);
 void display_all_alarm(void);
 void display_mode(void);
-
+void display_updating(void);
+bool is_data_valid(uint8_t number);
+void assign_data(void);
 /*
  * @brief:	alarm function when value of clock is equal to value of alarm
  * @para:	none
@@ -55,8 +59,7 @@ void alarm(void) {
 			&& ala_day == buf_day && ala_hour == buf_hour
 			&& ala_min == buf_min) {
 		lcd_ShowStr(10, 200, "WAKE UP", WHITE, RED, 24, 0);
-	}
-	else{
+	} else {
 		lcd_ShowStr(10, 200, "WAKE UP", BLACK, BLACK, 24, 0);
 	}
 }
@@ -70,7 +73,6 @@ void fsm_clock(void) {
 	case DISPLAY:
 		update_clock();
 		display_all_clock();
-
 		alarm();
 		button0_fsm();
 		break;
@@ -81,8 +83,160 @@ void fsm_clock(void) {
 	case ALARM:
 		fsm_alarm();
 		button0_fsm();
+		break;
+	case CHANGE_TIME_UART:
+//		fsm_uart_respone();
+//		display_updating();
+		button0_fsm();
+		break;
 	}
 	display_mode();
+}
+void fsm_uart_respone(void) {
+	switch (st_uart_respone) {
+	case TYPING:
+		break;
+	case CHECK_DATA:
+		if (take_number(&data) && is_data_valid(data)) {
+			st_uart_respone = HANDLE_DATA;
+		} else {
+			invalid_respone();
+			st_uart_respone = TYPING;
+		}
+		break;
+	case HANDLE_DATA:
+		assign_data();
+		switch (st_changing) {
+		case SECOND:
+			resquest_minute();
+			st_changing = MINUTE;
+			break;
+		case MINUTE:
+			resquest_hour();
+			st_changing = HOUR;
+			break;
+		case HOUR:
+			resquest_day();
+			st_changing = DAY;
+			break;
+		case DAY:
+			resquest_month();
+			st_changing = YEAR;
+			break;
+		case YEAR:
+			resquest_year();
+			st_changing = MONTH;
+			break;
+		case MONTH:
+			resquest_date();
+			st_changing = DATE;
+			break;
+		case DATE:
+			resquest_second();
+			st_changing = SECOND;
+			break;
+		}
+		break;
+	}
+}
+void assign_data(void) {
+	switch (st_changing) {
+	case SECOND:
+		buf_sec = data;
+		break;
+	case MINUTE:
+		buf_min = data;
+		break;
+	case HOUR:
+		buf_hour = data;
+		break;
+	case DAY:
+		buf_day = data;
+		break;
+	case YEAR:
+		buf_year = data;
+		break;
+	case MONTH:
+		buf_mon = data;
+		break;
+	case DATE:
+		buf_date = data;
+		break;
+	}
+}
+bool is_data_valid(uint8_t number) {
+	switch (st_changing) {
+	case SECOND:
+	case MINUTE:
+		if (number > 59)
+			return 0;
+		break;
+	case HOUR:
+		if (number > 23)
+			return 0;
+		break;
+	case DAY:
+		if (number > 7)
+			return 0;
+		break;
+	case YEAR:
+		if (number > 99)
+			return 0;
+		break;
+	case MONTH:
+		if (number > 12)
+			return 0;
+		break;
+	case DATE:
+		uint8_t max_date = 30;
+		switch (buf_mon) {
+		case 1:
+		case 3:
+		case 5:
+		case 7:
+		case 8:
+		case 10:
+		case 12:
+			max_date = 31;
+			break;
+		case 2:
+			if (buf_year % 4)
+				max_date = 28;
+			else
+				max_date = 29;
+			break;
+		default:
+			break;
+		}
+		if (number > max_date)
+			return 0;
+	}
+	return 1;
+}
+void display_updating(void) {
+	switch (st_changing) {
+	case SECOND:
+		lcd_ShowStr(20, 30, "Updating seconds...", WHITE, RED, 24, 0);
+		break;
+	case MINUTE:
+		lcd_ShowStr(20, 30, "Updating minutes...", WHITE, RED, 24, 0);
+		break;
+	case HOUR:
+		lcd_ShowStr(20, 30, "Updating hours...", WHITE, RED, 24, 0);
+		break;
+	case DAY:
+		lcd_ShowStr(20, 30, "Updating day...", WHITE, RED, 24, 0);
+		break;
+	case DATE:
+		lcd_ShowStr(20, 30, "Updating date...", WHITE, RED, 24, 0);
+		break;
+	case MONTH:
+		lcd_ShowStr(20, 30, "Updating month...", WHITE, RED, 24, 0);
+		break;
+	case YEAR:
+		lcd_ShowStr(20, 30, "Updating year...", WHITE, RED, 24, 0);
+		break;
+	}
 }
 /*
  * @brief:	blinking number, changing buffer of alarm
@@ -360,7 +514,7 @@ void fsm_changing(void) {
  * @para:	none
  * @retval:	none
  * */
-void reset_str(void){
+void reset_str(void) {
 	lcd_ShowStr(20, 30, "MODE: CHANGE TIME", BLACK, BLACK, 24, 0);
 }
 /*
@@ -386,7 +540,14 @@ bool button0_fsm(void) {
 				st_clock = ALARM;
 				break;
 			case ALARM:
+				display_all_clock();
+				resquest_second();
+				st_changing = SECOND;
+				st_clock = CHANGE_TIME_UART;
+				break;
+			case CHANGE_TIME_UART:
 				st_clock = DISPLAY;
+				break;
 			}
 			reset_str();
 			button_st[0] = pressed;
@@ -652,6 +813,9 @@ void display_mode(void) {
 	case ALARM:
 		lcd_ShowStr(20, 30, "MODE: ALARM", WHITE, RED, 24, 0);
 		break;
+	case CHANGE_TIME_UART:
+		lcd_ShowStr(20, 30, "MODE: UART", WHITE, RED, 24, 0);
+		break;
 	}
 }
 /*
@@ -666,4 +830,7 @@ void display_all_alarm(void) {
 	dis_min(ala_min, 1);
 	dis_month(ala_mon, 1);
 	dis_year(ala_year, 1);
+}
+void change_st_uart_respone_to_check(void) {
+	st_uart_respone = CHECK_DATA;
 }

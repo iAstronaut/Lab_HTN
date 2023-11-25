@@ -17,12 +17,12 @@ void LCD_WR_REG(uint16_t reg)
 	LCD->LCD_REG=reg;
 }
 
-void LCD_WR_DATA(uint16_t data)
+static void LCD_WR_DATA(uint16_t data)
 {
 	LCD->LCD_RAM=data;
 }
 
-uint16_t LCD_RD_DATA(void)
+static uint16_t LCD_RD_DATA(void)
 {
 	__IO uint16_t ram;
 	ram=LCD->LCD_RAM;
