@@ -36,6 +36,8 @@
 #include "sensor.h"
 #include "uart.h"
 #include "ds3231.h"
+#include "system.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -73,11 +75,15 @@ void sys_init(){
 	buzzer_init();
 	button_init();
 	uart_init_rs232();
-	set_timer(0, READ_SENSOR_TIME);
-	set_timer(1, LCD_SENSOR_TIME);
-	set_timer(2, ONE_SECOND);
+	init_box();
+	set_timer(0, READ_BUTTON_TIME);
+	set_timer(1, BLINKING_TIME);
+	set_timer(2, INCREASE_TIME);
+	set_timer(3, LCD_SENSOR_TIME);
+	set_timer(4, ONE_SECOND);
+	//display_text();
 }
-void LCD_show_sensor();
+
 /* USER CODE END 0 */
 
 /**
@@ -123,59 +129,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  lcd_Clear(WHITE);
-  int volval = 99;
-  uint8_t isnotify = 0;
+
   while (1)
   {
-	  if(!is_timer_on(0)){
-		  set_timer(0, READ_SENSOR_TIME);
-		  sensor_Read();
-  		  if(sensor_GetPotentiometer() >= 4095 * 0.7){
-  			  if(isnotify == 1){
-  				  if(!is_timer_on(2)){
-  					  set_timer(2, ONE_SECOND);
-  					  isnotify = 0;
-  	  				  uart_Rs232SendString("Potentiometer > 70%\n");
-  	  				  uart_Rs232SendString("Please reduce Potentiometer\n");
-  				  }
-  				  buzzer_SetVolume(volval);
-  			  }
-  			  else if(isnotify == 0){
-  				  buzzer_SetVolume(0);
-  				  if(!is_timer_on(2)){
-  					  set_timer(2, ONE_SECOND);
-  					  isnotify = 1;
-  				  }
-  			  }
-  	  	  }
-  		  else{
-  			  buzzer_SetVolume(0);
-  		  }
-	  }
-	  if(!is_timer_on(1)){
-		  set_timer(1, LCD_SENSOR_TIME);
-		  LCD_show_sensor();
-	  }
-	  if(!is_timer_on(3)){
-		  set_timer(3, READ_BUTTON_TIME);
-		  button_Scan();
-		  if(button_count[3] == 1){
-			  volval += 10;
-			  if(volval > 99){
-				  volval = 0;
-			  }
-			  lcd_ShowIntNum(10, 300, volval, 2, BLUE, WHITE, 16);
-		  }
-		  if(button_count[7] == 1){
-			  volval -= 10;
-			  if(volval < 0){
-				  volval = 99;
-			  }
-			  lcd_ShowIntNum(10, 300, volval, 2, BLUE, WHITE, 16);
-		  }
-	  }
 
+	  system_loop();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -230,37 +188,7 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void LCD_show_sensor(){
-	lcd_ShowStr(10, 100, "Voltage:", RED, WHITE, 16, 0) ;
-	lcd_ShowFloatNum(130, 100, sensor_GetVoltage(), 4, RED,	WHITE, 16);
-	lcd_ShowStr(180, 100, "V", RED, WHITE, 16, 0) ;
 
-	lcd_ShowStr(10, 120, "Current:", RED, WHITE, 16, 0) ;
-	lcd_ShowFloatNum(130, 120, sensor_GetCurrent(), 4, RED, WHITE, 16) ;
-	lcd_ShowStr(180, 120, "mA", RED, WHITE, 16, 0) ;
-
-	lcd_ShowStr(10, 140, "Power:", RED, WHITE, 16, 0) ;
-	lcd_ShowFloatNum(130, 140, sensor_GetCurrent() * sensor_GetVoltage(), 4, RED, WHITE, 16);
-	lcd_ShowStr(180, 140, "mW", RED, WHITE, 16, 0) ;
-
-	lcd_ShowStr(10, 160, "Light:", RED, WHITE, 16, 0);
-	if(sensor_GetLight() <= 4095*0.75){
-			lcd_ShowStr(60, 160, "(Strong)", RED, WHITE, 16, 0);
-		}
-		else{
-			lcd_ShowStr(60, 160, "(Weak)  ", RED, WHITE, 16, 0);
-		}
-	lcd_ShowIntNum(130, 160, sensor_GetLight(), 4, RED, WHITE, 16);
-
-
-	lcd_ShowStr(10, 180, "Potentiometer:", RED, WHITE, 16, 0);
-	lcd_ShowIntNum(130, 180, sensor_GetPotentiometer()*100/4095, 2, RED, WHITE, 16);
-	lcd_ShowStr(180, 180, "%", RED, WHITE, 16, 0);
-
-	lcd_ShowStr (10, 200, "Temperature:", RED, WHITE, 16, 0);
-	lcd_ShowFloatNum (130, 200, sensor_GetTemperature(), 4, RED, WHITE, 16);
-	lcd_ShowStr(180, 200, "C", RED, WHITE, 16, 0) ;
-}
 /* USER CODE END 4 */
 
 /**

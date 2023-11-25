@@ -1,0 +1,3 @@
+../Core/Src/system.c:20:6:sensor_diplay	12
+../Core/Src/system.c:77:6:LCD_show_sensor	2
+../Core/Src/system.c:105:6:system_loop	1

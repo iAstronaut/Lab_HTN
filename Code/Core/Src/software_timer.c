@@ -15,11 +15,11 @@ struct {
 	bool state;
 	unsigned int count;
 } timer[NUMBER_OF_TIMER];
-/* timer[0]: to read sensor
- * timer[1]: to lcd show sensor time
- * timer[2]: to notify Potentiometer
- * timer[3]: to read button
- * timer[4]: to increase value by 1 over time
+/* timer[0]: to read sensor and button
+ * timer[1]: to blink number
+ * timer[2]: to increase value by 1 over time
+ * timer[3]: to lcd show sensor time
+ * timer[4]: to notify Potentiometer
  * */
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {

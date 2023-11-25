@@ -1,0 +1,14 @@
+../Core/Src/my_clock.c:53:6:alarm	24	static
+../Core/Src/my_clock.c:71:6:fsm_clock	8	static
+../Core/Src/my_clock.c:96:6:fsm_alarm	8	static
+../Core/Src/my_clock.c:225:6:fsm_changing	8	static
+../Core/Src/my_clock.c:367:6:reset_str	24	static
+../Core/Src/my_clock.c:376:6:button0_fsm	8	static
+../Core/Src/my_clock.c:418:6:button2_fsm	8	static
+../Core/Src/my_clock.c:502:6:increase_value	24	static
+../Core/Src/my_clock.c:563:6:button1_fsm	16	static
+../Core/Src/my_clock.c:604:6:update_ds3231_register	8	static
+../Core/Src/my_clock.c:619:6:update_clock	4	static
+../Core/Src/my_clock.c:633:6:display_all_clock	8	static
+../Core/Src/my_clock.c:647:6:display_mode	24	static
+../Core/Src/my_clock.c:665:6:display_all_alarm	8	static
