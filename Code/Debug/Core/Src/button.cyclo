@@ -1,4 +1,0 @@
-../Core/Src/button.c:13:6:button_init	1
-../Core/Src/button.c:23:6:button_Scan	9
-../Core/Src/button.c:52:6:is_button_pressed	2
-../Core/Src/button.c:63:6:is_button_long_pressed	3

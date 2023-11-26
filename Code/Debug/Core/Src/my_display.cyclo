@@ -1,9 +1,0 @@
-../Core/Src/my_display.c:28:6:init_box	1
-../Core/Src/my_display.c:52:6:dis_sec	2
-../Core/Src/my_display.c:66:6:dis_min	2
-../Core/Src/my_display.c:81:6:dis_hour	2
-../Core/Src/my_display.c:95:6:dis_day	3
-../Core/Src/my_display.c:115:6:dis_date	2
-../Core/Src/my_display.c:130:6:dis_month	2
-../Core/Src/my_display.c:145:6:dis_year	2
-../Core/Src/my_display.c:154:6:display_text	1

@@ -1,9 +1,0 @@
-../Core/Src/my_display.c:28:6:init_box	4	static
-../Core/Src/my_display.c:52:6:dis_sec	40	static
-../Core/Src/my_display.c:66:6:dis_min	40	static
-../Core/Src/my_display.c:81:6:dis_hour	40	static
-../Core/Src/my_display.c:95:6:dis_day	40	static
-../Core/Src/my_display.c:115:6:dis_date	40	static
-../Core/Src/my_display.c:130:6:dis_month	40	static
-../Core/Src/my_display.c:145:6:dis_year	40	static
-../Core/Src/my_display.c:154:6:display_text	32	static
