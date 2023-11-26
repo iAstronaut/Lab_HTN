@@ -7,12 +7,13 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2023 STMicroelectronics.
-  * All rights reserved.
+  * <h2><center>&copy; Copyright (c) 2023 STMicroelectronics.
+  * All rights reserved.</center></h2>
   *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
+  * This software component is licensed by ST under BSD 3-Clause license,
+  * the "License"; You may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at:
+  *                        opensource.org/licenses/BSD-3-Clause
   *
   ******************************************************************************
   */
@@ -75,11 +76,20 @@ void Error_Handler(void);
 #define INPUT_X3_GPIO_Port GPIOC
 #define LD_LATCH_Pin GPIO_PIN_6
 #define LD_LATCH_GPIO_Port GPIOG
+#define T_CS_Pin GPIO_PIN_7
+#define T_CS_GPIO_Port GPIOG
+#define T_CLK_Pin GPIO_PIN_8
+#define T_CLK_GPIO_Port GPIOG
+#define T_PEN_Pin GPIO_PIN_8
+#define T_PEN_GPIO_Port GPIOC
+#define T_MOSI_Pin GPIO_PIN_9
+#define T_MOSI_GPIO_Port GPIOC
 #define FSMC_BLK_Pin GPIO_PIN_8
 #define FSMC_BLK_GPIO_Port GPIOA
+#define T_MISO_Pin GPIO_PIN_12
+#define T_MISO_GPIO_Port GPIOC
 #define BTN_LOAD_Pin GPIO_PIN_3
 #define BTN_LOAD_GPIO_Port GPIOD
-
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
@@ -89,3 +99,5 @@ void Error_Handler(void);
 #endif
 
 #endif /* __MAIN_H */
+
+/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

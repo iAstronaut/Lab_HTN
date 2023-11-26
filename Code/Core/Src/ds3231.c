@@ -10,6 +10,7 @@
 #define DS3231_ADDRESS 0x68<<1
 
 uint8_t ds3231_buffer[7];
+uint8_t ds3231_read_count = 0;
 
 uint8_t ds3231_hours;
 uint8_t ds3231_min;
@@ -27,9 +28,6 @@ void ds3231_init(){
 	ds3231_buffer[4] = DEC2BCD(15); //date
 	ds3231_buffer[5] = DEC2BCD(9);  //month
 	ds3231_buffer[6] = DEC2BCD(23); //year
-	if(HAL_I2C_IsDeviceReady(&hi2c1, DS3231_ADDRESS, 3, 50) != HAL_OK){
-		while(1);
-	};
 }
 
 void ds3231_Write(uint8_t address, uint8_t value){

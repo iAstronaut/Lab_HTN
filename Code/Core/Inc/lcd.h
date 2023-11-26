@@ -79,7 +79,7 @@ typedef struct
 
 #define LGRAYBLUE        0XA651
 #define LBBLUE           0X2B12
-
+//
 static void LCD_WR_DATA(uint16_t data);
 static uint16_t LCD_RD_DATA(void);
 
