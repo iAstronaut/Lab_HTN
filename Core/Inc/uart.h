@@ -1,9 +1,4 @@
-/*
- * uart.h
- *
- *  Created on: Sep 26, 2023
- *      Author: HaHuyen
- */
+
 #ifndef INC_UART_H_
 #define INC_UART_H_
 
@@ -30,6 +25,6 @@ void uart_Rs232SendNumPercent(uint32_t num);
 
 void uart_init_esp();
 void uart_EspSendBytes(uint8_t* bytes, uint16_t size);
-
+void uart_EspSendString(uint8_t* str);
 #endif /* INC_UART_H_ */
 

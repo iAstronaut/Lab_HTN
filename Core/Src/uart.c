@@ -1,9 +1,4 @@
-/*
- * uart.c
- *
- *  Created on: Sep 26, 2023
- *      Author: HaHuyen
- */
+
 #include "uart.h"
 
 
@@ -23,6 +18,7 @@ void uart_Rs232SendString(uint8_t* str){
 void uart_Rs232SendBytes(uint8_t* bytes, uint16_t size){
 	HAL_UART_Transmit(&huart1, bytes, size, 10);
 }
+
 
 void uart_Rs232SendNum(uint32_t num){
 	if(num == 0){
@@ -65,6 +61,9 @@ void uart_init_esp(){
 
 void uart_EspSendBytes(uint8_t* bytes, uint16_t size){
 	HAL_UART_Transmit(&huart2, bytes, size, 10);
+}
+void uart_EspSendString(uint8_t* str){
+	HAL_UART_Transmit(&huart2, (void*)msg, sprintf((void*)msg,"%s",str), 10);
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){

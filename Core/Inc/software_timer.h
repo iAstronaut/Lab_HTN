@@ -14,7 +14,7 @@
 #define FREQUENCY_OF_TIM	1000 //Hz
 #define READ_BUTTON_TIME	10 //50ms
 #define READ_SENSOR_TIME	100 // read sensor every 0.1s
-#define SEND_DATA_TIME		500
+#define SEND_DATA_TIME		15000
 
 void set_timer(unsigned i, unsigned int time);
 void run_timer(void);

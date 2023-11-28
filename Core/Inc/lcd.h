@@ -1,10 +1,3 @@
-/*
- * lcd.h
- *
- *  Created on: Sep 25, 2023
- *      Author: HaHuyen
- */
-
 
 #ifndef INC_LCD_H_
 #define INC_LCD_H_
@@ -74,8 +67,6 @@ typedef struct
 #define LGRAYBLUE        0XA651
 #define LBBLUE           0X2B12
 
-static void LCD_WR_DATA(uint16_t data);
-static uint16_t LCD_RD_DATA(void);
 
 void lcd_SetCursor(uint16_t x,uint16_t y);
 void lcd_AddressSet(uint16_t x1,uint16_t y1,uint16_t x2,uint16_t y2);

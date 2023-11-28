@@ -31,19 +31,20 @@ void system_loop(void) {
 		set_timer(0, READ_BUTTON_TIME);
 		sensor_Read();
 	}
-//	if (!is_timer_on(1)){
-//		sensor_CalTemperature(idx++);
-//		if(idx >= BUFFER_SIZE){
-//			float value = sensor_result();
-//			sum_15s += value;
-//			lcd_ShowFloatNum(0, 200, value, 4, WHITE, BLACK, 24);
-//			idx = 0;
-//		}
-//		set_timer(1, READ_SENSOR_TIME);
-//	}
-//	if (!is_timer_on(2)){
-//		send_data((float)sum_15s/15);
-//		sum_15s = 0;
-//		set_timer(2, SEND_DATA_TIME);
-//	}
+	if (!is_timer_on(1)) {
+		sensor_CalTemperature(idx++);
+		if (idx >= BUFFER_SIZE) {
+			float value = sensor_result();
+			sum_15s += value;
+			lcd_ShowFloatNum(0, 200, value, 4, WHITE, BLACK, 24);
+			idx = 0;
+		}
+		set_timer(1, READ_SENSOR_TIME);
+	}
+	if (!is_timer_on(2)) {
+		ftoa((float)sum_15s/15);
+		sum_15s = 0;
+		send_data();
+		set_timer(2, SEND_DATA_TIME);
+	}
 }

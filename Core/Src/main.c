@@ -18,6 +18,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <control.h>
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
@@ -56,8 +57,6 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void system_init();
-void test_LedDebug();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -111,7 +110,8 @@ int main(void)
   /* USER CODE BEGIN WHILE */
  while (1)
   {
-	 system_loop();
+	  // 50ms task
+	  system_loop();
 
     /* USER CODE END WHILE */
 
