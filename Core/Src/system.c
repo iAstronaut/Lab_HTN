@@ -8,51 +8,42 @@
 #include "system.h"
 
 extern TIM_HandleTypeDef htim2;
-
-void test_lcd() {
-	lcd_Fill(0, 0, 240, 20, BLUE);
-	lcd_StrCenter(0, 2, "Hello World !!!", RED, BLUE, 16, 1);
-	lcd_ShowStr(20, 30, "Test lcd screen", WHITE, RED, 24, 0);
-	lcd_DrawCircle(60, 120, GREEN, 40, 1);
-	lcd_DrawCircle(160, 120, BRED, 40, 0);
-	lcd_ShowPicture(80, 200, 90, 90, gImage_logo);
-}
-void test_Uart(){
-	if(button_count[12] == 1){
-		uart_Rs232SendNumPercent(23);
-	}
-}
-void displayTime() {
-	lcd_ShowIntNum(70, 100, ds3231_hours, 2, GREEN, BLACK, 24);
-	lcd_ShowIntNum(110, 100, ds3231_min, 2, GREEN, BLACK, 24);
-	lcd_ShowIntNum(150, 100, ds3231_sec, 2, GREEN, BLACK, 24);
-	lcd_ShowIntNum(20, 130, ds3231_day, 2, YELLOW, BLACK, 24);
-	lcd_ShowIntNum(70, 130, ds3231_date, 2, YELLOW, BLACK, 24);
-	lcd_ShowIntNum(110, 130, ds3231_month, 2, YELLOW, BLACK, 24);
-	lcd_ShowIntNum(150, 130, ds3231_year, 2, YELLOW, BLACK, 24);
-}
-
+uint16_t idx = 0;
+float sum_15s = 0;
 void system_init(void) {
-//	HAL_TIM_Base_Start_IT(&htim2);
-//	set_timer(0, READ_BUTTON_TIME);
-//	set_timer(1, BLINKING_TIME);
-//	button_init();
+	HAL_TIM_Base_Start_IT(&htim2);
+	set_timer(0, READ_BUTTON_TIME);
+	set_timer(1, READ_SENSOR_TIME);
+	set_timer(2, SEND_DATA_TIME);
+	button_init();
 	lcd_init();
+	sensor_init();
+	uart_init_esp();
 	lcd_Clear(BLACK);
-//	ds3231_init();
-	init_box();
-//	update_ds3231_register();
-	display_text();
-	//uart_init_rs232();
+	lcd_ShowStr(0, 175, "TEMPERATURE", WHITE, BLACK, 24, 0);
 }
 
 void system_loop(void) {
-//	if (!is_timer_on(0)) {
-//		ds3231_ReadTime();
-//		button_Scan();
-//		set_timer(0, READ_BUTTON_TIME);
+	if (!is_timer_on(0)) {
+		button_Scan();
+		test_Esp();
+		lightProcess();
+		set_timer(0, READ_BUTTON_TIME);
+		sensor_Read();
+	}
+//	if (!is_timer_on(1)){
+//		sensor_CalTemperature(idx++);
+//		if(idx >= BUFFER_SIZE){
+//			float value = sensor_result();
+//			sum_15s += value;
+//			lcd_ShowFloatNum(0, 200, value, 4, WHITE, BLACK, 24);
+//			idx = 0;
+//		}
+//		set_timer(1, READ_SENSOR_TIME);
 //	}
-//	fsm_handle_uart_flag();
-//	fsm_clock();
-
+//	if (!is_timer_on(2)){
+//		send_data((float)sum_15s/15);
+//		sum_15s = 0;
+//		set_timer(2, SEND_DATA_TIME);
+//	}
 }

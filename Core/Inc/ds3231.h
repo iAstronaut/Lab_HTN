@@ -11,13 +11,13 @@
 #include "i2c.h"
 #include "utils.h"
 
-#define ADDRESS_SEC			0x00
-#define ADDRESS_MIN			0x01
-#define ADDRESS_HOUR		0x02
-#define ADDRESS_DAY			0x03
-#define ADDRESS_DATE		0x04
-#define ADDRESS_MONTH		0x05
-#define ADDRESS_YEAR		0x06
+#define ADRESS_SEC		0x00
+#define ADRESS_MIN		0x01
+#define ADRESS_HOUR		0x02
+#define ADRESS_DAY		0x03
+#define ADRESS_DATE		0x04
+#define ADRESS_MONTH	0x05
+#define ADRESS_YEAR		0x06
 
 extern uint8_t ds3231_hours;
 extern uint8_t ds3231_min;

@@ -17,12 +17,12 @@ void LCD_WR_REG(uint16_t reg)
 	LCD->LCD_REG=reg;
 }
 
-static void LCD_WR_DATA(uint16_t data)
+void LCD_WR_DATA(uint16_t data)
 {
 	LCD->LCD_RAM=data;
 }
 
-static uint16_t LCD_RD_DATA(void)
+uint16_t LCD_RD_DATA(void)
 {
 	__IO uint16_t ram;
 	ram=LCD->LCD_RAM;
@@ -478,7 +478,7 @@ void lcd_DrawCircle(int xc, int yc,uint16_t c,int r, int fill) //ve duong or hin
 void lcd_ShowStr(uint16_t x, uint16_t y,char *str,uint16_t fc, uint16_t bc,uint8_t sizey,uint8_t mode)
 {
 	uint16_t x0=x;
-  uint8_t bHz=0;
+    uint8_t bHz=0;
 	while(*str!=0)
 	{
 		if(!bHz)

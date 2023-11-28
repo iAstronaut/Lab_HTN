@@ -1,14 +1,14 @@
 /*
  * picture.h
  *
- *  Created on: Oct 30, 2023
- *      Author: phamv
+ *  Created on: Sep 26, 2023
+ *      Author: HaHuyen
  */
 
 #ifndef INC_PICTURE_H_
 #define INC_PICTURE_H_
 
-extern const unsigned char gImage_logo[16200];
+extern const unsigned char gImage_c_flag[37620];
+extern const unsigned char gImage_l_flag[10440];
 
-extern const unsigned char gImage_pic[86400];
 #endif /* INC_PICTURE_H_ */

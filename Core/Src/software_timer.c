@@ -16,8 +16,8 @@ struct {
 	unsigned int count;
 } timer[NUMBER_OF_TIMER];
 /* timer[0]: to read button
- * timer[1]: to blink number
- * timer[2]: to increase number over time
+ * timer[1]: to read sensor
+ * timer[2]: to send data to esp
  * */
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
