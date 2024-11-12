@@ -86,9 +86,10 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-#define TURN_ON_TMR 	200
-#define TURN_OFF_TMR	400
-  int counter = TURN_OFF_TMR;
+#define GREEN_TMR 	300
+#define YELLOW_TMR	100
+#define RED_TMR		500
+  int counter = GREEN_TMR;
 
   // 0: Green 	(3s)
   // 1: Yellow 	(1s)
@@ -100,32 +101,44 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+
+		// Exercise 1
+	//	  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port , DEBUG_LED_Pin , 1);
+	//	  HAL_Delay(2000);
+	//	  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port , DEBUG_LED_Pin , 0);
+	//	  HAL_Delay(4000);
+
+		  // Exercise 2
+		  counter--;
+		  if(state == 0) {
+			  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port , DEBUG_LED_Pin , 1);
+			  HAL_GPIO_WritePin(RED_LED_GPIO_Port , RED_LED_Pin, 0);
+			  HAL_GPIO_WritePin(YELLOW_LED_GPIO_Port , YELLOW_LED_Pin, 0);
+			  if(counter == 0) {
+				  state = 1;
+				  counter = YELLOW_TMR;
+			  }
+		  }
+		  else if(state == 1){
+			  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port , DEBUG_LED_Pin , 0);
+			  HAL_GPIO_WritePin(RED_LED_GPIO_Port , RED_LED_Pin, 0);
+			  HAL_GPIO_WritePin(YELLOW_LED_GPIO_Port , YELLOW_LED_Pin, 1);
+			  if(counter == 0) {
+				  state = 2;
+				  counter = RED_TMR;
+			  }
+		  }
+		  else if(state == 2){
+			  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port , DEBUG_LED_Pin , 0);
+			  HAL_GPIO_WritePin(RED_LED_GPIO_Port , RED_LED_Pin, 1);
+			  HAL_GPIO_WritePin(YELLOW_LED_GPIO_Port , YELLOW_LED_Pin, 0);
+			  if(counter == 0) {
+				  state = 0;
+				  counter = GREEN_TMR;
+			  }
+		  }
+		  HAL_Delay(10);
     /* USER CODE END WHILE */
-	// Exercise 1
-//	  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port , DEBUG_LED_Pin , 1);
-//	  HAL_Delay(2000);
-//	  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port , DEBUG_LED_Pin , 0);
-//	  HAL_Delay(4000);
-
-	  // Exercise 2
-	  counter--;
-	  if(state == 0) {
-		  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port , DEBUG_LED_Pin , 0);
-		  if(counter == 0) {
-			  state = 1;
-			  counter = TURN_ON_TMR;
-		  }
-	  }
-	  else {
-		  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port , DEBUG_LED_Pin , 1);
-		  if(counter == 0) {
-			  state = 0;
-			  counter = TURN_OFF_TMR;
-		  }
-	  }
-	  HAL_Delay(10);
-
-	  // Exer
 
     /* USER CODE BEGIN 3 */
   }
@@ -191,14 +204,14 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, DEBUG_LED_Pin|RED_LED_Pin|YELLOW_LED_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : DEBUG_LED_Pin */
-  GPIO_InitStruct.Pin = DEBUG_LED_Pin;
+  /*Configure GPIO pins : DEBUG_LED_Pin RED_LED_Pin YELLOW_LED_Pin */
+  GPIO_InitStruct.Pin = DEBUG_LED_Pin|RED_LED_Pin|YELLOW_LED_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(DEBUG_LED_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
 }
 
