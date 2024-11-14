@@ -85,21 +85,33 @@ void fsm_clock(void) {
 		button0_fsm();
 		break;
 	case CHANGE_TIME_UART:
-//		fsm_uart_respone();
-//		display_updating();
-		button0_fsm();
+		fsm_uart_respone();
+		display_updating();
+//		button0_fsm();
 		break;
 	}
 	display_mode();
 }
+uint8_t respone_cnt = 0;
 void fsm_uart_respone(void) {
 	switch (st_uart_respone) {
 	case TYPING:
+		if(!is_timer_on(1)){
+			respone_cnt++;
+			set_timer(1, 10000);
+			if(respone_cnt == 3){
+				lcd_ShowStr(20, 30, "ERROR IN UART...", WHITE, RED, 24, 0);
+				st_clock = DISPLAY;
+			}
+		}
 		break;
 	case CHECK_DATA:
+
 		if (take_number(&data) && is_data_valid(data)) {
 			st_uart_respone = HANDLE_DATA;
 		} else {
+			respone_cnt = 0;
+			set_timer(1, 10000);
 			invalid_respone();
 			st_uart_respone = TYPING;
 		}
@@ -132,10 +144,12 @@ void fsm_uart_respone(void) {
 			st_changing = DATE;
 			break;
 		case DATE:
-			resquest_second();
-			st_changing = SECOND;
+			st_clock = DISPLAY;
 			break;
 		}
+		respone_cnt = 0;
+		set_timer(1, 10000);
+		st_uart_respone = TYPING;
 		break;
 	}
 }
@@ -143,28 +157,38 @@ void assign_data(void) {
 	switch (st_changing) {
 	case SECOND:
 		buf_sec = data;
+		ds3231_Write(ADDRESS_SEC, buf_sec);
 		break;
 	case MINUTE:
 		buf_min = data;
+		ds3231_Write(ADDRESS_MIN, buf_min);
+
 		break;
 	case HOUR:
 		buf_hour = data;
+		ds3231_Write(ADDRESS_HOUR, buf_hour);
 		break;
 	case DAY:
 		buf_day = data;
+		ds3231_Write(ADDRESS_DAY, buf_day);
 		break;
 	case YEAR:
 		buf_year = data;
+		ds3231_Write(ADDRESS_YEAR, buf_year);
 		break;
 	case MONTH:
 		buf_mon = data;
+		ds3231_Write(ADDRESS_MONTH, buf_mon);
 		break;
 	case DATE:
 		buf_date = data;
+		ds3231_Write(ADDRESS_DATE, buf_date);
 		break;
 	}
+
 }
 bool is_data_valid(uint8_t number) {
+	uint8_t max_date = 30;
 	switch (st_changing) {
 	case SECOND:
 	case MINUTE:
@@ -188,7 +212,6 @@ bool is_data_valid(uint8_t number) {
 			return 0;
 		break;
 	case DATE:
-		uint8_t max_date = 30;
 		switch (buf_mon) {
 		case 1:
 		case 3:
@@ -544,6 +567,7 @@ bool button0_fsm(void) {
 				resquest_second();
 				st_changing = SECOND;
 				st_clock = CHANGE_TIME_UART;
+				set_timer(1, 10000);
 				break;
 			case CHANGE_TIME_UART:
 				st_clock = DISPLAY;
@@ -754,21 +778,21 @@ bool button1_fsm(uint8_t *number) {
 	}
 	return 1;
 }
-/*
- * @brief:	update the data of ds3231 for initial
- * @para:	none
- * @retval:	none
- * */
-void update_ds3231_register(void) {
-	ds3231_Write(ADDRESS_SEC, buf_sec);
-	ds3231_Write(ADDRESS_YEAR, buf_year);
-	ds3231_Write(ADDRESS_MONTH, buf_mon);
-	ds3231_Write(ADDRESS_DATE, buf_date);
-	ds3231_Write(ADDRESS_DAY, buf_day);
-	ds3231_Write(ADDRESS_HOUR, buf_hour);
-	ds3231_Write(ADDRESS_MIN, buf_min);
-
-}
+///*
+// * @brief:	update the data of ds3231 for initial
+// * @para:	none
+// * @retval:	none
+// * */
+//void update_ds3231_register(void) {
+//	ds3231_Write(ADDRESS_SEC, buf_sec);
+//	ds3231_Write(ADDRESS_YEAR, buf_year);
+//	ds3231_Write(ADDRESS_MONTH, buf_mon);
+//	ds3231_Write(ADDRESS_DATE, buf_date);
+//	ds3231_Write(ADDRESS_DAY, buf_day);
+//	ds3231_Write(ADDRESS_HOUR, buf_hour);
+//	ds3231_Write(ADDRESS_MIN, buf_min);
+//
+//}
 /*
  * @brief:	update the data of clock in display mode
  * @para:	none

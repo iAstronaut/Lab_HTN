@@ -18,10 +18,10 @@ extern enum enum_st_changing st_changing_uart;
 bool rb_take_data(uint8_t *data);
 
 void fsm_handle_uart_flag(void) {
+	uint8_t last_char;
 	if (ring_buffer.flag) {
 		switch (st_handle_flag) {
 		case TYPING:
-			uint8_t last_char;
 			if (ring_buffer.tail == 0) {
 				last_char = ring_buffer.buffer[MAX_SIZE_RING_BUFFER - 1];
 			} else {
@@ -32,6 +32,7 @@ void fsm_handle_uart_flag(void) {
 			}
 			break;
 		case DONE:
+
 			change_st_uart_respone_to_check();
 			st_handle_flag = TYPING;
 			break;

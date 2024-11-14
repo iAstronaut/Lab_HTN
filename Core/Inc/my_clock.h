@@ -13,6 +13,7 @@
 #include "define.h"
 #include "button.h"
 #include "uart.h"
+#include "software_timer.h"
 extern enum enum_st_clock{
 	DISPLAY, CHANGE_TIME, ALARM, CHANGE_TIME_UART
 } st_clock;

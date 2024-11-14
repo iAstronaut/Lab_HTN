@@ -33,26 +33,25 @@ void displayTime() {
 }
 
 void system_init(void) {
-//	HAL_TIM_Base_Start_IT(&htim2);
-//	set_timer(0, READ_BUTTON_TIME);
+	HAL_TIM_Base_Start_IT(&htim2);
+	set_timer(0, READ_BUTTON_TIME);
 //	set_timer(1, BLINKING_TIME);
-//	button_init();
+	button_init();
 	lcd_init();
 	lcd_Clear(BLACK);
-//	ds3231_init();
+	ds3231_init();
 	init_box();
-//	update_ds3231_register();
 	display_text();
-	//uart_init_rs232();
+	uart_init_rs232();
 }
 
 void system_loop(void) {
-//	if (!is_timer_on(0)) {
-//		ds3231_ReadTime();
-//		button_Scan();
-//		set_timer(0, READ_BUTTON_TIME);
-//	}
-//	fsm_handle_uart_flag();
-//	fsm_clock();
+	if (!is_timer_on(0)) {
+		ds3231_ReadTime();
+		button_Scan();
+		set_timer(0, READ_BUTTON_TIME);
+	}
+	fsm_handle_uart_flag();
+	fsm_clock();
 
 }
