@@ -99,8 +99,32 @@ void fsm_uart_respone(void) {
 		if(!is_timer_on(1)){
 			respone_cnt++;
 			set_timer(1, 10000);
+			switch (st_changing) {
+				case SECOND:
+					resquest_second();
+				break;
+				case MINUTE:
+					resquest_minute();
+				break;
+				case HOUR:
+					resquest_hour();
+				break;
+				case DAY:
+					resquest_day();
+					break;
+				case YEAR:
+					resquest_year();
+					break;
+				case MONTH:
+					resquest_month();
+					break;
+				case DATE:
+					resquest_date();
+					break;
+				
+			}
 			if(respone_cnt == 3){
-				lcd_ShowStr(20, 30, "ERROR IN UART...", WHITE, RED, 24, 0);
+				lcd_ShowStr(20, 60, "ERROR IN UART...", WHITE, RED, 24, 0);
 				st_clock = DISPLAY;
 			}
 		}
@@ -132,11 +156,11 @@ void fsm_uart_respone(void) {
 			st_changing = DAY;
 			break;
 		case DAY:
-			resquest_month();
+			resquest_year();
 			st_changing = YEAR;
 			break;
 		case YEAR:
-			resquest_year();
+			resquest_month();
 			st_changing = MONTH;
 			break;
 		case MONTH:
@@ -239,25 +263,25 @@ bool is_data_valid(uint8_t number) {
 void display_updating(void) {
 	switch (st_changing) {
 	case SECOND:
-		lcd_ShowStr(20, 30, "Updating seconds...", WHITE, RED, 24, 0);
+		lcd_ShowStr(20, 60, "Updating seconds...", WHITE, RED, 24, 0);
 		break;
 	case MINUTE:
-		lcd_ShowStr(20, 30, "Updating minutes...", WHITE, RED, 24, 0);
+		lcd_ShowStr(20, 60, "Updating minutes...", WHITE, RED, 24, 0);
 		break;
 	case HOUR:
-		lcd_ShowStr(20, 30, "Updating hours...", WHITE, RED, 24, 0);
+		lcd_ShowStr(20, 60, "Updating hours...", WHITE, RED, 24, 0);
 		break;
 	case DAY:
-		lcd_ShowStr(20, 30, "Updating day...", WHITE, RED, 24, 0);
+		lcd_ShowStr(20, 60, "Updating day...", WHITE, RED, 24, 0);
 		break;
 	case DATE:
-		lcd_ShowStr(20, 30, "Updating date...", WHITE, RED, 24, 0);
+		lcd_ShowStr(20, 60, "Updating date...", WHITE, RED, 24, 0);
 		break;
 	case MONTH:
-		lcd_ShowStr(20, 30, "Updating month...", WHITE, RED, 24, 0);
+		lcd_ShowStr(20, 60, "Updating month...", WHITE, RED, 24, 0);
 		break;
 	case YEAR:
-		lcd_ShowStr(20, 30, "Updating year...", WHITE, RED, 24, 0);
+		lcd_ShowStr(20, 60, "Updating year...", WHITE, RED, 24, 0);
 		break;
 	}
 }

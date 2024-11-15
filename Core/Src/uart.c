@@ -74,11 +74,11 @@ void resquest_year(void){
 	uart_Rs232SendString((uint8_t*) str);
 }
 bool take_number(uint16_t *number) {
-	if (ring_buffer.buffer[ring_buffer.head] == '%') {
-		uint8_t temp;
-		rb_take_data(&temp);
-		return 0;
-	}
+	// if (ring_buffer.buffer[ring_buffer.head] == '%') {
+	// 	uint8_t temp;
+	// 	rb_take_data(&temp);
+	// 	return 0;
+	// }
 	uint8_t data_taken;
 	while (ring_buffer.buffer[ring_buffer.head] != '%'
 			&& rb_take_data(&data_taken)) {
