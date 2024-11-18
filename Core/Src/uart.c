@@ -9,37 +9,41 @@ struct {
 enum {
 	TYPING, DONE
 } st_handle_flag;
-uint8_t receive_buffer1 = 0;
+volatile uint8_t receive_buffer1 = 0;
 uint8_t msg[100];
+volatile bool ring_buffer_flag = 0;
 
 extern enum enum_st_clock st_clock;
 extern enum enum_st_changing st_changing_uart;
 
 bool rb_take_data(uint8_t *data);
 
-void fsm_handle_uart_flag(void) {
-	uint8_t last_char;
-	if (ring_buffer.flag) {
-		switch (st_handle_flag) {
-		case TYPING:
-			if (ring_buffer.tail == 0) {
-				last_char = ring_buffer.buffer[MAX_SIZE_RING_BUFFER - 1];
-			} else {
-				last_char = ring_buffer.buffer[ring_buffer.tail - 1];
-			}
-			if (last_char == '%') {
-				st_handle_flag = DONE;
-			}
-			break;
-		case DONE:
-
-			change_st_uart_respone_to_check();
-			st_handle_flag = TYPING;
-			break;
-		}
-		ring_buffer.flag = 0;
-	}
+void set_state(enum UARTState new_state) {
+    st_handle_flag = new_state;
 }
+
+void fsm_handle_uart_flag(void) {
+    if (ring_buffer.flag) {
+        switch (st_handle_flag) {
+        case TYPING:
+            if (ring_buffer.tail == 0) {
+                last_char = ring_buffer.buffer[MAX_SIZE_RING_BUFFER - 1];
+            } else {
+                last_char = ring_buffer.buffer[ring_buffer.tail - 1];
+            }
+            if (last_char == '%') {
+                set_state(DONE);
+            }
+            break;
+        case DONE:
+            change_st_uart_respone_to_check();
+            set_state(TYPING);
+            break;
+        }
+        ring_buffer.flag = 0;
+    }
+}
+
 void invalid_respone(void) {
 	char *str = "Invalid input\n";
 	uart_Rs232SendString((uint8_t*) str);
@@ -74,47 +78,51 @@ void resquest_year(void){
 	uart_Rs232SendString((uint8_t*) str);
 }
 bool take_number(uint16_t *number) {
-	// if (ring_buffer.buffer[ring_buffer.head] == '%') {
-	// 	uint8_t temp;
-	// 	rb_take_data(&temp);
-	// 	return 0;
-	// }
-	uint8_t data_taken;
-	while (ring_buffer.buffer[ring_buffer.head] != '%'
-			&& rb_take_data(&data_taken)) {
-		*number = *number * 10 + (data_taken - '0');
-	}
-	if (ring_buffer.buffer[ring_buffer.head] == '%') {
-		uint8_t temp;
-		rb_take_data(&temp);
-	}
-	return 1;
+    uint8_t data_taken;
 
+    while (rb_take_data(&data_taken) && data_taken != '%') {
+        if (data_taken < '0' || data_taken > '9') {
+            invalid_respone();
+            return false; // Giá trị không hợp lệ
+        }
+        *number = *number * 10 + (data_taken - '0');
+    }
+
+    if (data_taken == '%') {
+        return true; // Số hợp lệ
+    }
+
+    return false; // Không có ký tự kết thúc hợp lệ
 }
+
 void rb_add_data(uint8_t data) {
-	uint32_t next = ring_buffer.tail + 1;
-	if (next >= MAX_SIZE_RING_BUFFER) {
-		next = 0;
-	}
-	if (next == ring_buffer.head) {
-		//buffer is full
-		ring_buffer.full = 1;
-	}
-	ring_buffer.buffer[ring_buffer.tail] = data;
-	ring_buffer.tail = next;
+    if (ring_buffer.full) {
+        // Buffer đầy, không thể thêm dữ liệu
+        return;
+    }
+
+    uint32_t next = (ring_buffer.tail + 1) % MAX_SIZE_RING_BUFFER;
+
+    ring_buffer.buffer[ring_buffer.tail] = data;
+    ring_buffer.tail = next;
+
+    if (next == ring_buffer.head) {
+        ring_buffer.full = true;
+    }
 }
+
 bool rb_take_data(uint8_t *data) {
-	if (ring_buffer.head == ring_buffer.tail)
-		return 0; // buffer is empty
-	uint32_t next = ring_buffer.head + 1;
-	if (next >= MAX_SIZE_RING_BUFFER) {
-		next = 0;
-	}
-	*data = ring_buffer.buffer[ring_buffer.head];
-	ring_buffer.head = next;
-	ring_buffer.full = 0;
-	return 1;
+    if (ring_buffer.head == ring_buffer.tail && !ring_buffer.full) {
+        return false; // Buffer rỗng
+    }
+
+    *data = ring_buffer.buffer[ring_buffer.head];
+    ring_buffer.head = (ring_buffer.head + 1) % MAX_SIZE_RING_BUFFER;
+
+    ring_buffer.full = false;
+    return true;
 }
+
 void uart_init_rs232() {
 	HAL_UART_Receive_IT(&huart1, &receive_buffer1, 1);
 }
@@ -166,17 +174,12 @@ void uart_Rs232SendNumPercent(uint32_t num) {
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-	if (huart->Instance == USART1) {
-		// rs232 isr
-		// can be modified
-		if (st_clock == CHANGE_TIME_UART) {
-			//HAL_UART_Transmit(&huart1, &receive_buffer1, 1, 10);
-			rb_add_data(receive_buffer1);
-			ring_buffer.flag = 1;
-		}
-
-		// turn on the receice interrupt
-		HAL_UART_Receive_IT(&huart1, &receive_buffer1, 1);
-	}
+    if (huart->Instance == USART1) {
+        if (st_clock == CHANGE_TIME_UART) {
+            rb_add_data(receive_buffer1);
+            ring_buffer.flag = 1;
+        }
+        HAL_UART_Receive_IT(&huart1, &receive_buffer1, 1); // Bật lại ngắt nhận
+    }
 }
 
