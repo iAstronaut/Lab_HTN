@@ -26,6 +26,6 @@ void screen_display();
 void touchProcess();
 void update_snake(uint8_t isSnakeEating);
 uint8_t run_snake();
-void random_kudamono();
+void generate_apple();
 
 #endif /* INC_DISPLAY_SCREEN_H_ */

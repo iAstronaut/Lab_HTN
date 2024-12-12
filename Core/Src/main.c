@@ -30,15 +30,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "software_timer.h"
-#include "led_7seg.h"
-#include "button.h"
-#include "lcd.h"
-#include "picture.h"
-#include "ds3231.h"
-#include "sensor.h"
-#include "buzzer.h"
 #include "touch.h"
-#include "system.h"
 #include "control.h"
 #include "display_screen.h"
 /* USER CODE END Includes */
@@ -182,7 +174,6 @@ void SystemClock_Config(void)
 /* USER CODE BEGIN 4 */
 void system_init(){
 	  timer_init();
-	  button_init();
 	  lcd_init();
 	  touch_init();
 
@@ -194,7 +185,7 @@ void system_init(){
 uint8_t count_led_debug = 0;
 
 void test_LedDebug(){
-	count_led_debug = (count_led_debug + 1)%20;
+	count_led_debug = (count_led_debug + 1) % 20;
 	if(count_led_debug == 0){
 		HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
 	}

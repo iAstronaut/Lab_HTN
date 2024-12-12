@@ -15,9 +15,9 @@
 
 void button_lcd_init();
 void fsm_game();
-uint8_t isButtonUp();
-uint8_t isButtonDown();
-uint8_t isButtonLeft();
-uint8_t isButtonRight();
+uint8_t isMoveUp();
+uint8_t isMoveDown();
+uint8_t isMoveLeft();
+uint8_t isMoveRight();
 
 #endif /* INC_CONTROL_H_ */

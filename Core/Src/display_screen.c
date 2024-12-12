@@ -1,15 +1,8 @@
-/*
- * display_screen.c
- *
- *  Created on: Nov 26, 2023
- *      Author: huaho
- */
-
 #include "display_screen.h"
 
 enum{
 	MOVEUP, MOVEDOWN, MOVELEFT, MOVERIGHT
-}direct = MOVEUP;
+} direct = MOVEUP;
 
 struct{
 	uint16_t head_i;
@@ -17,34 +10,36 @@ struct{
 	uint16_t tail_i;
 	uint16_t tail_j;
 	uint16_t color;
-}snake;
+} snake;
 
 struct{
 	uint16_t i;
 	uint16_t j;
 	uint16_t color;
-}apple;
+} apple;
 
 uint8_t play_screen[SIZE_SCREEN/SIZE_FAT][SIZE_SCREEN/SIZE_FAT];
 
 void Fat_fill(uint8_t i, uint8_t j, uint16_t color);
 
-void random_kudamono(){
-
+void generate_apple(){
 	do{
-		apple.i = rand()%14;
-		apple.j = rand()%14;
+		apple.i = rand() % 14;
+		apple.j = rand() % 14;
 	}
 	while(play_screen[apple.i][apple.j] != 0);
+
 	play_screen[apple.i][apple.j] = 2;
+	apple.color = RED;
 }
 
 void init_screen(){
-for(uint8_t i = 0; i < SIZE_SCREEN/SIZE_FAT; i++){
-	for(uint8_t j = 0; j < SIZE_SCREEN/SIZE_FAT; j++){
-		play_screen[i][j] = 0;
+	for(uint8_t i = 0; i < SIZE_SCREEN/SIZE_FAT; i++){
+		for(uint8_t j = 0; j < SIZE_SCREEN/SIZE_FAT; j++){
+			play_screen[i][j] = 0;
+		}
 	}
-}
+
 	lcd_Fill(X_SCREEN, Y_SCREEN, X_SCREEN + SIZE_SCREEN, Y_SCREEN + SIZE_SCREEN, WHITE);
 
 	snake.color = BLUE;
@@ -56,8 +51,7 @@ for(uint8_t i = 0; i < SIZE_SCREEN/SIZE_FAT; i++){
 	play_screen[snake.tail_i][snake.tail_j] = 1;
 	snake.color = BLUE;
 
-	random_kudamono();
-	apple.color = RED;
+	generate_apple();
 
 	direct = MOVELEFT;
 }
@@ -129,19 +123,19 @@ uint8_t run_snake(){
 void update_head(){
 	switch (direct) {
 		case MOVEUP:
-			play_screen[snake.head_i][snake.head_j-1] = 1;
+			play_screen[snake.head_i][snake.head_j - 1] = 1;
 			snake.head_j--;
 			break;
 		case MOVEDOWN:
-			play_screen[snake.head_i][snake.head_j+1] = 1;
+			play_screen[snake.head_i][snake.head_j + 1] = 1;
 			snake.head_j++;
 			break;
 		case MOVELEFT:
-			play_screen[snake.head_i-1][snake.head_j] = 1;
+			play_screen[snake.head_i - 1][snake.head_j] = 1;
 			snake.head_i--;
 			break;
 		case MOVERIGHT:
-			play_screen[snake.head_i+1][snake.head_j] = 1;
+			play_screen[snake.head_i + 1][snake.head_j] = 1;
 			snake.head_i++;
 			break;
 		default:
@@ -171,6 +165,7 @@ void update_tail(){
 	snake.tail_i = tail_i_next;
 	snake.tail_j = tail_j_next;
 }
+
 void update_snake(uint8_t isSnakeEating){
 	if(isSnakeEating == 1){
 		HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
@@ -186,39 +181,39 @@ void update_snake(uint8_t isSnakeEating){
 
 void touchProcess() {
 	switch (direct) {
-	case MOVEUP:
-		if(isButtonLeft()){
-			direct = MOVELEFT;
-		}
-		else if(isButtonRight()){
-			direct = MOVERIGHT;
-		}
-		break;
-	case MOVEDOWN:
-		if(isButtonLeft()){
-			direct = MOVELEFT;
-		}
-		else if(isButtonRight()){
-			direct = MOVERIGHT;
-		}
-		break;
-	case MOVELEFT:
-		if(isButtonUp()){
-			direct = MOVEUP;
-		}
-		else if(isButtonDown()){
-			direct = MOVEDOWN;
-		}
-		break;
-	case MOVERIGHT:
-		if(isButtonUp()){
-			direct = MOVEUP;
-		}
-		else if(isButtonDown()){
-			direct = MOVEDOWN;
-		}
-		break;
-	default:
-		break;
+		case MOVEUP:
+			if(isMoveLeft()){
+				direct = MOVELEFT;
+			}
+			else if(isMoveRight()){
+				direct = MOVERIGHT;
+			}
+			break;
+		case MOVEDOWN:
+			if(isMoveLeft()){
+				direct = MOVELEFT;
+			}
+			else if(isMoveRight()){
+				direct = MOVERIGHT;
+			}
+			break;
+		case MOVELEFT:
+			if(isMoveUp()){
+				direct = MOVEUP;
+			}
+			else if(isMoveDown()){
+				direct = MOVEDOWN;
+			}
+			break;
+		case MOVERIGHT:
+			if(isMoveUp()){
+				direct = MOVEUP;
+			}
+			else if(isMoveDown()){
+				direct = MOVEDOWN;
+			}
+			break;
+		default:
+			break;
 	}
 }

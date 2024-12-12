@@ -39,39 +39,39 @@ void snake_direct();
 void fsm_game() {
 	lcd_ShowIntNum(108, 10, score, 3, YELLOW, BLACK, 16);
 	switch (st_game) {
-	case INIT:
-		bt_start();
-		st_game = START;
-		break;
-	case START:
-		if (is_bt_start_pressed()) {
-			trasition_to_game();
-		}
-		break;
-	case GAME:
-		snake_direct();
-		if (!is_timer_on(3)) {
-			if (run_snake() == 0) {
-				bt_retry();
-				st_game = OVER;
-				break;
-			} else if (run_snake() == 1) {
-				update_snake(1);
-			} else {
-				score++;
-				update_snake(2);
-				random_kudamono();
+		case INIT:
+			bt_start();
+			st_game = START;
+			break;
+		case START:
+			if (is_bt_start_pressed()) {
+				trasition_to_game();
 			}
-			screen_display();
-			set_timer(3, SNAKE_MOVE_TIME);
-		}
-		break;
-	case OVER:
-		if(is_bt_retry_pressed()) {
-			score = 0;
-			trasition_to_game();
-		}
-		break;
+			break;
+		case GAME:
+			snake_direct();
+			if (!is_timer_on(3)) {
+				if (run_snake() == 0) {
+					bt_retry();
+					st_game = OVER;
+					break;
+				} else if (run_snake() == 1) {
+					update_snake(1);
+				} else {
+					score++;
+					update_snake(2);
+					generate_apple();
+				}
+				screen_display();
+				set_timer(3, SNAKE_MOVE_TIME);
+			}
+			break;
+		case OVER:
+			if(is_bt_retry_pressed()) {
+				score = 0;
+				trasition_to_game();
+			}
+			break;
 	}
 }
 
@@ -134,27 +134,15 @@ void init_control_button() {
 
 	lcd_Fill(button_lcd[0].x_start, button_lcd[0].y_start, button_lcd[0].x_end,
 			button_lcd[0].y_end, BLUE);
-	//lcd_ShowStr(button_lcd[0].x_start + 19, button_lcd[0].y_start + 13, "U", RED, BLUE, 24, 1);
 
 	lcd_Fill(button_lcd[1].x_start, button_lcd[1].y_start, button_lcd[1].x_end,
 			button_lcd[1].y_end, BLUE);
-	//lcd_ShowStr(button_lcd[1].x_start + 19, button_lcd[1].y_start + 13, "D", RED, BLUE, 24, 1);
 
 	lcd_Fill(button_lcd[2].x_start, button_lcd[2].y_start, button_lcd[2].x_end,
 			button_lcd[2].y_end, BLUE);
-	//lcd_ShowStr(button_lcd[2].x_start + 19, button_lcd[2].y_start + 13, "L", RED, BLUE, 24, 1);
 
 	lcd_Fill(button_lcd[3].x_start, button_lcd[3].y_start, button_lcd[3].x_end,
 			button_lcd[3].y_end, BLUE);
-	//lcd_ShowStr(button_lcd[3].x_start + 19, button_lcd[3].y_start + 13, "R", RED, BLUE, 24, 1);
-//	lcd_DrawRectangle(button_lcd[0].x_start, button_lcd[0].y_start,
-//			button_lcd[0].x_end, button_lcd[0].y_end, BLACK);
-//	lcd_DrawRectangle(button_lcd[1].x_start, button_lcd[1].y_start,
-//			button_lcd[1].x_end, button_lcd[1].y_end, BLACK);
-//	lcd_DrawRectangle(button_lcd[2].x_start, button_lcd[2].y_start,
-//			button_lcd[2].x_end, button_lcd[2].y_end, BLACK);
-//	lcd_DrawRectangle(button_lcd[3].x_start, button_lcd[3].y_start,
-//			button_lcd[3].x_end, button_lcd[3].y_end, BLACK);
 }
 void button_lcd_init() {
 	init_control_button();
@@ -169,7 +157,7 @@ void snake_direct() {
 	}
 }
 
-uint8_t isButtonUp() {
+uint8_t isMoveUp() {
 if(touch_GetX() > button_lcd[0].x_start
 		&& touch_GetX() < button_lcd[0].x_end
 		&& touch_GetY() > button_lcd[0].y_start
@@ -180,7 +168,7 @@ if(touch_GetX() > button_lcd[0].x_start
 	return 0;
 }
 
-uint8_t isButtonDown() {
+uint8_t isMoveDown() {
 	if (!touch_IsTouched())
 		return 0;
 	if( touch_GetX() > button_lcd[1].x_start
@@ -193,7 +181,7 @@ uint8_t isButtonDown() {
 	return 0;
 }
 
-uint8_t isButtonLeft() {
+uint8_t isMoveLeft() {
 	if (!touch_IsTouched())
 		return 0;
 	if( touch_GetX() > button_lcd[2].x_start
@@ -206,7 +194,7 @@ uint8_t isButtonLeft() {
 	return 0;
 }
 
-uint8_t isButtonRight() {
+uint8_t isMoveRight() {
 	if (!touch_IsTouched())
 		return 0;
 	if( touch_GetX() > button_lcd[3].x_start
