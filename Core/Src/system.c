@@ -31,7 +31,7 @@ void sensor_diplay(){
 					  set_timer(4, ONE_SECOND);
 					  isnotify = 0;
 	  				  uart_Rs232SendString("Potentiometer > 70%\n");
-	  				  uart_Rs232SendString("Please reduce Potentiometer\n\n");
+	  				  uart_Rs232SendString("Please reduce Potentiometer\n-------------\n");
 				  }
 			  }
 			  else if(isnotify == 0){

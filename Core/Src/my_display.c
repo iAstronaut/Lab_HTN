@@ -25,8 +25,9 @@ struct {
 	uint8_t x_year;
 	uint8_t y_year;
 } box;
+
 void init_box() {
-	box.text_color = GREEN;
+	box.text_color = WHITE;
 	box.background_color = BLACK;
 	box.x_second = 150;
 	box.y_second = 6;
