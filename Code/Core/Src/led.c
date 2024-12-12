@@ -234,29 +234,32 @@ void init_traffic_light(void) {
 /*
  * @brief: 	display traffic light function
  * @para:	i - id of traffic light(0: WE, 1: NS)
- * 			red, yellow, green - state of red, yellow and green led (1: on, 0: off)
+ * 			light_state - state of traffic light(1: RED_ON, 2: YELLOW_ON, 4: GREEN_ON, 0: BLACK_ALL)
  * @retval:	none*/
-void control_traffic_light(uint8_t i, uint8_t red, uint8_t yellow, uint8_t green){
+void control_traffic_light(uint8_t i, uint8_t light_state){
 	if(i == 0){
-		//draw red
-		if(!red){
-			traffic_WE.red.COLOR_FILL = BLACK;
-		}
-		else{
+		if((light_state & RED_ON) == RED_ON){
 			traffic_WE.red.COLOR_FILL = RED;
 		}
-		if(!yellow){
-			traffic_WE.yellow.COLOR_FILL = BLACK;
-		}
 		else{
+			traffic_WE.red.COLOR_FILL = BLACK;
+		}
+
+		if((light_state & YELLOW_ON) == YELLOW_ON){
 			traffic_WE.yellow.COLOR_FILL = YELLOW;
 		}
-		if(!green){
-			traffic_WE.green.COLOR_FILL = BLACK;
-		}
 		else{
+			traffic_WE.yellow.COLOR_FILL = BLACK;
+		}
+
+		if((light_state & GREEN_ON) == GREEN_ON){
 			traffic_WE.green.COLOR_FILL = GREEN;
 		}
+		else{
+			traffic_WE.green.COLOR_FILL = BLACK;
+		}
+
+		//draw red
 		lcd_DrawCircle(traffic_WE.red.center_x, traffic_WE.red.center_y, traffic_WE.red.COLOR_FILL, traffic_WE.red.radius, 1);
 		//draw yellow
 		lcd_DrawCircle(traffic_WE.yellow.center_x, traffic_WE.yellow.center_y, traffic_WE.yellow.COLOR_FILL, traffic_WE.yellow.radius, 1);
@@ -264,24 +267,30 @@ void control_traffic_light(uint8_t i, uint8_t red, uint8_t yellow, uint8_t green
 		lcd_DrawCircle(traffic_WE.green.center_x, traffic_WE.green.center_y, traffic_WE.green.COLOR_FILL, traffic_WE.green.radius, 1);
 	}
 	else{
-		if(!red){
-			traffic_NS.red.COLOR_FILL = BLACK;
-		}
-		else{
+		if((light_state & RED_ON) == RED_ON){
 			traffic_NS.red.COLOR_FILL = RED;
 		}
-		if(!yellow){
-			traffic_NS.yellow.COLOR_FILL = BLACK;
-		}
 		else{
-			traffic_NS.yellow.COLOR_FILL = YELLOW;
-		}
-		if(!green){
+			traffic_NS.yellow.COLOR_FILL = BLACK;
 			traffic_NS.green.COLOR_FILL = BLACK;
 		}
+
+		if((light_state & YELLOW_ON) == YELLOW_ON){
+			traffic_NS.yellow.COLOR_FILL = YELLOW;
+		}
 		else{
+			traffic_NS.red.COLOR_FILL = BLACK;
+			traffic_NS.green.COLOR_FILL = BLACK;
+		}
+
+		if((light_state & GREEN_ON) == GREEN_ON){
 			traffic_NS.green.COLOR_FILL = GREEN;
 		}
+		else{
+			traffic_NS.yellow.COLOR_FILL = BLACK;
+			traffic_NS.red.COLOR_FILL = BLACK;
+		}
+
 		//draw red
 		lcd_DrawCircle(traffic_NS.red.center_x, traffic_NS.red.center_y, traffic_NS.red.COLOR_FILL, traffic_NS.red.radius, 1);
 		//draw yellow

@@ -11,9 +11,13 @@
 #include <stdint.h>
 #include "lcd.h"
 
+#define RED_ON		1
+#define YELLOW_ON	2
+#define GREEN_ON	4
+#define BLACK_ALL	0
 
 void init_traffic_light(void);
-void control_traffic_light(uint8_t i, uint8_t red, uint8_t yellow, uint8_t green);
+void control_traffic_light(uint8_t i, uint8_t light_state);
 void box_rec(uint8_t box_idx, uint16_t x_start, uint16_t y_start, uint16_t height0, uint16_t width0, uint16_t color_edge, uint16_t color_fill, uint8_t is_fill);
 void update_led_buf(unsigned val1, unsigned val2, unsigned mode);
 void LCD_DisplayNum();
