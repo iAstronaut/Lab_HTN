@@ -43,7 +43,7 @@ void led7_Scan(){
 	default:
 		break;
 	}
-	led7_index = (led7_index + 1)%4;
+	led7_index = (led7_index + 1) % 4;
 	HAL_GPIO_WritePin(LD_LATCH_GPIO_Port, LD_LATCH_Pin, 0);
 	HAL_SPI_Transmit(&hspi1, (void*)&spi_buffer, 2, 1);
 	HAL_GPIO_WritePin(LD_LATCH_GPIO_Port, LD_LATCH_Pin, 1);

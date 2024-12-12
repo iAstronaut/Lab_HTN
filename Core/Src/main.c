@@ -34,23 +34,33 @@
 /* USER CODE BEGIN PD */
 // #define exercise_1
 // #define exercise_2
-//#define exercise_3
+#define exercise_3
 //#define exercise_4
-#define exercise_5
+//#define exercise_5
 
-#define LED_ON        20
-#define LED_OFF       30
+#define LED_ON        1
+#define LED_OFF       0
 
 #define RED           0
 #define GREEN         1
 #define YELLOW        2
+
+#define INIT_TIMER    50
+
+#define DEBUG_TIMER   2000
+#define LED_Y0_ON_TIMER  2000
+#define LED_Y0_OFF_TIMER  4000
+#define LED_Y1_ON_TIMER  5000
+#define LED_Y1_OFF_TIMER  1000
+
 #define RED_TIMER     5000
 #define GREEN_TIMER   3000
 #define YELLOW_TIMER  1000
 
-#define _1_HZ         1
-#define _25_HZ        11
-#define _100_HZ       111
+#define FREQ		 1000
+#define  _1HZ        1
+#define _25HZ        25
+#define _100HZ       100
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -87,37 +97,37 @@ void system_init() {
   HAL_GPIO_WritePin(OUTPUT_Y0_GPIO_Port, OUTPUT_Y0_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(OUTPUT_Y1_GPIO_Port, OUTPUT_Y1_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, GPIO_PIN_RESET);
-  setTimer0(50);
-  setTimer1(50);
-  setTimer2(50);
+  setTimer0(INIT_TIMER);
+  setTimer1(INIT_TIMER);
+  setTimer2(INIT_TIMER);
 #endif
 
 #ifdef exercise_2
   HAL_GPIO_WritePin(OUTPUT_Y0_GPIO_Port, OUTPUT_Y0_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(OUTPUT_Y1_GPIO_Port, OUTPUT_Y1_Pin, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, GPIO_PIN_SET);
-  setTimer0(5000);
+  HAL_GPIO_WritePin(OUTPUT_Y1_GPIO_Port, OUTPUT_Y1_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, GPIO_PIN_RESET);
+  setTimer0(RED_TIMER);
 #endif
 
 #ifdef exercise_3
   HAL_GPIO_WritePin(OUTPUT_Y0_GPIO_Port, OUTPUT_Y0_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(OUTPUT_Y1_GPIO_Port, OUTPUT_Y1_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, GPIO_PIN_RESET);
-  setTimer0(50);
+  setTimer0(INIT_TIMER);
 #endif
 #ifdef exercise_4
   HAL_GPIO_WritePin(OUTPUT_Y0_GPIO_Port, OUTPUT_Y0_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(OUTPUT_Y1_GPIO_Port, OUTPUT_Y1_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, GPIO_PIN_RESET);
-  setTimer0(500);
-  setTimer1(1000);
+  setTimer0(FREQ / 2);
+  setTimer1(FREQ);
 
 #endif
 #ifdef exercise_5
   HAL_GPIO_WritePin(OUTPUT_Y0_GPIO_Port, OUTPUT_Y0_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(OUTPUT_Y1_GPIO_Port, OUTPUT_Y1_Pin, GPIO_PIN_RESET);
   HAL_GPIO_WritePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin, GPIO_PIN_RESET);
-  setTimer0(1000);
+  setTimer0(FREQ);
 
 #endif
 }
@@ -128,31 +138,29 @@ int LED_Y1_MODE = LED_OFF;
 void ex1() {
   if (timer0_flag) {
      HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
-     setTimer0(2000);
+     setTimer0(DEBUG_TIMER);
   }
 
   if (timer1_flag) {
-    if (LED_Y0_MODE == LED_ON) {
-      HAL_GPIO_WritePin(OUTPUT_Y0_GPIO_Port, OUTPUT_Y0_Pin, GPIO_PIN_RESET);
-      LED_Y0_MODE = LED_OFF;
-      setTimer1(4000);
-    } else if (LED_Y0_MODE == LED_OFF) {
-      HAL_GPIO_WritePin(OUTPUT_Y0_GPIO_Port, OUTPUT_Y0_Pin, GPIO_PIN_SET);
-      LED_Y0_MODE = LED_ON;
-      setTimer1(2000);
-    }
+	  LED_Y0_MODE = !LED_Y0_MODE;
+	  HAL_GPIO_WritePin(OUTPUT_Y0_GPIO_Port, OUTPUT_Y0_Pin, LED_Y0_MODE);
+	  if (LED_Y0_MODE == LED_ON) {
+		  setTimer1(LED_Y0_ON_TIMER);
+	  }
+	  else{
+		  setTimer1(LED_Y0_OFF_TIMER);
+	  }
   }
 
   if (timer2_flag) {
-    if (LED_Y1_MODE == LED_ON) {
-      HAL_GPIO_WritePin(OUTPUT_Y1_GPIO_Port, OUTPUT_Y1_Pin, GPIO_PIN_RESET);
-      LED_Y1_MODE = LED_OFF;
-      setTimer2(1000);
-    } else if (LED_Y1_MODE == LED_OFF) {
-      HAL_GPIO_WritePin(OUTPUT_Y1_GPIO_Port, OUTPUT_Y1_Pin, GPIO_PIN_SET);
-      LED_Y1_MODE = LED_ON;
-      setTimer2(5000);
-    }
+	  LED_Y1_MODE = !LED_Y1_MODE;
+	  HAL_GPIO_WritePin(OUTPUT_Y1_GPIO_Port, OUTPUT_Y1_Pin, LED_Y1_MODE);
+	  if (LED_Y1_MODE == LED_ON) {
+		  setTimer1(LED_Y1_ON_TIMER);
+	  }
+	  else{
+		  setTimer1(LED_Y1_OFF_TIMER);
+	  }
   }
 }
 
@@ -194,87 +202,70 @@ void ex2() {
       break;
   }
 }
+
 int cnt = 0;
 void ex3() {
-  int mode = _100_HZ;
+  int mode = _25HZ;
 
-  if (mode == _1_HZ) {
-    if (timer0_flag) {
-      cnt++;
-      HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
-      led7_Scan();
-      setTimer0(1000);
-    }
-  } else if (mode == _25_HZ) {
-    if (timer0_flag) {
-    	cnt++;
-      HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
-      led7_Scan();
-      setTimer0(40);
-    }
-  } else if (mode == _100_HZ) {
-    if (timer0_flag) {
-      HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
-      led7_Scan();
-      setTimer0(10);
-    }
+  if (timer0_flag) {
+	cnt++;
+	HAL_GPIO_TogglePin(DEBUG_LED_GPIO_Port, DEBUG_LED_Pin);
+	led7_Scan();
+	setTimer0(FREQ / mode);
   }
 }
+
 int status_colon = 0;
 int second = 0;
 int minute = 50;
 int hour = 17;
+
 void ex4(){
 	led7_SetColon(status_colon);
-	led7_SetDigit(hour/10,0,0);
-	led7_SetDigit(hour%10,1,0);
-	led7_SetDigit(minute/10,2,0);
-	led7_SetDigit(minute%10,3,0);
-	if (timer0_flag){
-		setTimer0(500);
-		if(status_colon){
-			status_colon = 0;
-		}
-		else
-			status_colon = 1;
-	}
-	if (timer1_flag){
-			setTimer1(1000);
-			second++;
-			if(second == 60){
-				second = 0;
-				minute++;
-				if(minute == 60){
-					minute = 0;
-					hour++;
-					if(hour == 24){
-						hour = 0;
-					}
-				}
+	led7_SetDigit(hour / 10, 0, 0);
+	led7_SetDigit(hour % 10, 1, 0);
+	led7_SetDigit(minute / 10, 2, 0);
+	led7_SetDigit(minute % 10, 3, 0);
 
+	if (timer0_flag){
+		setTimer0(FREQ / 2);
+		status_colon = !status_colon;
+	}
+
+	if (timer1_flag){
+		setTimer1(FREQ);
+		second++;
+
+		if(second == 60){
+			second = 0;
+			minute++;
+
+			if(minute == 60){
+				minute = 0;
+				hour = (hour + 1) % 24;
 			}
-			if(status_colon){
-				status_colon = 0;
-			}
-			else
-				status_colon = 1;
 		}
+
+		status_colon = !status_colon;
+	}
 }
+
 int num_digit[4] = {1, 2, 3, 4};
 int temp;
 void ex5(){
 	led7_SetDigit(num_digit[0],0,0);
-		led7_SetDigit(num_digit[1],1,0);
-		led7_SetDigit(num_digit[2],2,0);
-		led7_SetDigit(num_digit[3],3,0);
-		if (timer0_flag){
-				setTimer0(1000);
-				temp = num_digit[3];
-				for(int i = 3; i > 0; i--){
-					num_digit[i] = num_digit[i - 1];
-				}
-				num_digit[0] = temp;
-			}
+	led7_SetDigit(num_digit[1],1,0);
+	led7_SetDigit(num_digit[2],2,0);
+	led7_SetDigit(num_digit[3],3,0);
+
+	if (timer0_flag){
+		setTimer0(FREQ);
+		temp = num_digit[3];
+		for(int i = 3; i > 0; i--){
+			num_digit[i] = num_digit[i - 1];
+		}
+		num_digit[0] = temp;
+	}
 }
 /* USER CODE END 0 */
 
@@ -332,8 +323,12 @@ int main(void)
   #ifdef exercise_3
     ex3();
   #endif
-//    ex4();
+  #ifdef exercise_4
+    ex4();
+  #endif
+  #ifdef exercise_5
     ex5();
+  #endif
   }
   /* USER CODE END 3 */
 }
